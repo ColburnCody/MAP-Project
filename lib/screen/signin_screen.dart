@@ -107,9 +107,11 @@ class _Controller {
     state.formKey.currentState.save();
 
     User user;
+    MyDialog.circularProgressStart(state.context);
     try {
       user = await FirebaseController.signIn(email: email, password: password);
     } catch (e) {
+      MyDialog.circularProgressStop(state.context);
       MyDialog.info(
         context: state.context,
         title: 'Sign In Error',
@@ -117,7 +119,7 @@ class _Controller {
       );
       return;
     }
-
+    MyDialog.circularProgressStop(state.context);
     Navigator.pushNamed(state.context, UserHomeScreen.routeName,
         arguments: {Constant.ARG_USER: user});
   }
