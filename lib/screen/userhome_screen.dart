@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/constant.dart';
+import 'package:lesson3/model/photomemo.dart';
 import 'package:lesson3/screen/addphotomeme_screen.dart';
+import 'package:lesson3/screen/myview/myimage.dart';
 
 class UserHomeScreen extends StatefulWidget {
   static const routeName = '/userHomeScreen';
@@ -16,6 +18,7 @@ class UserHomeScreen extends StatefulWidget {
 class _UserHomeState extends State<UserHomeScreen> {
   _Controller con;
   User user;
+  List<PhotoMemo> photoMemoList;
 
   @override
   void initState() {
@@ -29,6 +32,7 @@ class _UserHomeState extends State<UserHomeScreen> {
   Widget build(BuildContext context) {
     Map args = ModalRoute.of(context).settings.arguments;
     user ??= args[Constant.ARG_USER];
+    photoMemoList ??= args[Constant.ARG_PHOTOMEMOLIST];
     return WillPopScope(
       onWillPop: () => Future.value(false), // disable Android system back button
       child: Scaffold(
@@ -54,7 +58,21 @@ class _UserHomeState extends State<UserHomeScreen> {
           child: Icon(Icons.add),
           onPressed: con.addButton,
         ),
-        body: Text('user home ${user.email}'),
+        body: photoMemoList.length == 0
+            ? Text(
+                'No PhotoMemos found!',
+                style: Theme.of(context).textTheme.headline5,
+              )
+            : ListView.builder(
+                itemCount: photoMemoList.length,
+                itemBuilder: (BuildContext context, int index) => ListTile(
+                  leading: MyImage.network(
+                    url: photoMemoList[index].photoURL,
+                    context: context,
+                  ),
+                  title: Text(photoMemoList[index].title),
+                ),
+              ),
       ),
     );
   }

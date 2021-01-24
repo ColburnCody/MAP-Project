@@ -2,8 +2,12 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:lesson3/controller/firebasecontroller.dart';
+import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
+import 'package:lesson3/screen/myview/mydialog.dart';
 
 class AddPhotoMemoScreen extends StatefulWidget {
   static const routeName = '/addPhotoMemoScreen';
@@ -18,6 +22,8 @@ class _AddPhotoMemoState extends State<AddPhotoMemoScreen> {
   File photo;
   _Controller con;
   User user;
+  String progressMessage;
+
   @override
   void initState() {
     super.initState();
@@ -88,6 +94,11 @@ class _AddPhotoMemoState extends State<AddPhotoMemoScreen> {
                   ),
                 ],
               ),
+              progressMessage == null
+                  ? SizedBox(
+                      height: 1.0,
+                    )
+                  : Text(progressMessage, style: Theme.of(context).textTheme.headline6),
               TextFormField(
                 decoration: InputDecoration(
                   hintText: 'Title',
@@ -129,16 +140,57 @@ class _Controller {
   _Controller(this.state);
   PhotoMemo tempMemo = PhotoMemo();
 
-  void save() {
+  void save() async {
     if (!state.formKey.currentState.validate()) return;
     state.formKey.currentState.save();
-    print('==== ${tempMemo.title}');
-    print('==== ${tempMemo.memo}');
-    print('==== ${tempMemo.sharedWith}');
+
+    MyDialog.circularProgressStart(state.context);
+
+    try {
+      Map photoInfo = await FirebaseController.uploadPhotoFile(
+        photo: state.photo,
+        uid: state.user.uid,
+        listener: (double progress) {
+          state.render(() {
+            if (progress == null)
+              state.progressMessage = null;
+            else {
+              progress *= 100;
+              state.progressMessage = 'Uploading: ' + progress.toStringAsFixed(1) + ' %';
+            }
+          });
+        },
+      );
+      tempMemo.photoFilename = photoInfo[Constant.ARG_FILENAME];
+      tempMemo.photoURL = photoInfo[Constant.ARG_DOWNLOADURL];
+      tempMemo.timestamp = DateTime.now();
+      tempMemo.createdBy = state.user.email;
+      String docId = await FirebaseController.addPhotoMemo(tempMemo);
+      tempMemo.docId = docId;
+
+      MyDialog.circularProgressStop(state.context);
+      Navigator.pop(state.context); // return to User Home Screen
+    } catch (e) {
+      MyDialog.circularProgressStop(state.context);
+      MyDialog.info(context: state.context, title: 'Save PhotoMemo error', content: '$e');
+    }
   }
 
-  void getPhoto(String src) {
-    print('==== src: $src');
+  void getPhoto(String src) async {
+    try {
+      PickedFile _imageFile;
+      var _picker = ImagePicker();
+      if (src == Constant.SRC_CAMERA) {
+        _imageFile = await _picker.getImage(source: ImageSource.camera);
+      } else {
+        _imageFile = await _picker.getImage(source: ImageSource.gallery);
+      }
+      state.render(() => state.photo = File(_imageFile.path));
+      if (_imageFile == null) return; // selection cancelled
+    } catch (e) {
+      MyDialog.info(
+          context: state.context, title: 'Failed to get picture', content: '$e');
+    }
   }
 
   void saveTitle(String value) {
