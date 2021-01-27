@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lesson3/model/constant.dart';
@@ -52,12 +54,48 @@ class _DetailedViewState extends State<DetailedViewScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Container(
-                height: MediaQuery.of(context).size.height * 0.4,
-                child: MyImage.network(
-                  url: onePhotoMemo.photoURL,
-                  context: context,
-                ),
+              Stack(
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    child: con.photoFile == null
+                        ? MyImage.network(
+                            url: onePhotoMemo.photoURL,
+                            context: context,
+                          )
+                        : Image.file(
+                            con.photoFile,
+                            fit: BoxFit.fill,
+                          ),
+                  ),
+                  editMode
+                      ? PopupMenuButton<String>(
+                          onSelected: con.getPhoto,
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: Constant.SRC_CAMERA,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.photo_camera),
+                                  Text(Constant.SRC_CAMERA),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: Constant.SRC_GALLERY,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.photo_library),
+                                  Text(Constant.SRC_GALLERY),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                      : SizedBox(
+                          height: 1.0,
+                        ),
+                ],
               ),
               TextFormField(
                 enabled: editMode,
@@ -119,6 +157,7 @@ class _DetailedViewState extends State<DetailedViewScreen> {
 class _Controller {
   _DetailedViewState state;
   _Controller(this.state);
+  File photoFile; // camera or gallery
 
   void update() {
     state.render(() => state.editMode = false);
@@ -127,4 +166,6 @@ class _Controller {
   void edit() {
     state.render(() => state.editMode = true);
   }
+
+  void getPhoto(String src) {}
 }
