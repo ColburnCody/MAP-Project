@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
+import 'package:lesson3/screen/signup_screen.dart';
 import 'package:lesson3/screen/userhome_screen.dart';
 
 import 'myview/mydialog.dart';
@@ -34,37 +35,66 @@ class _SignInState extends State<SignInScreen> {
       appBar: AppBar(
         title: Text('Sign In'),
       ),
-      body: Form(
-        key: formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Email',
+      body: Padding(
+        padding: const EdgeInsets.only(
+          top: 10.0,
+          left: 15.0,
+        ),
+        child: Form(
+          key: formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Center(
+                  child: Text(
+                    'PhotoMemo',
+                    style: TextStyle(
+                      fontFamily: 'HachiMaruPop',
+                      fontSize: 40.0,
+                    ),
+                  ),
                 ),
-                keyboardType: TextInputType.emailAddress,
-                autocorrect: false,
-                validator: con.validateEmail,
-                onSaved: con.saveEmail,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Password',
+                Text(
+                  'Sign in, please!',
+                  style: TextStyle(
+                    fontFamily: 'HachiMaruPop',
+                  ),
                 ),
-                obscureText: true,
-                autocorrect: false,
-                validator: con.validatePassword,
-                onSaved: con.savePassword,
-              ),
-              RaisedButton(
-                onPressed: con.signIn,
-                child: Text(
-                  'Sign In',
-                  style: Theme.of(context).textTheme.button,
+                TextFormField(
+                  decoration: InputDecoration(
+                    hintText: 'Email',
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  autocorrect: false,
+                  validator: con.validateEmail,
+                  onSaved: con.saveEmail,
                 ),
-              ),
-            ],
+                TextFormField(
+                  decoration: InputDecoration(
+                    hintText: 'Password',
+                  ),
+                  obscureText: true,
+                  autocorrect: false,
+                  validator: con.validatePassword,
+                  onSaved: con.savePassword,
+                ),
+                RaisedButton(
+                  onPressed: con.signIn,
+                  child: Text(
+                    'Sign In',
+                    style: Theme.of(context).textTheme.button,
+                  ),
+                ),
+                SizedBox(
+                  height: 15.0,
+                ),
+                RaisedButton(
+                  onPressed: con.signUp,
+                  child: Text('Create a new account',
+                      style: Theme.of(context).textTheme.button),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -136,5 +166,10 @@ class _Controller {
           title: 'Firestore getPhotoMemoList error',
           content: '$e');
     }
+  }
+
+  void signUp() {
+    // navigate to sign up screen
+    Navigator.pushNamed(state.context, SignUpScreen.routeName);
   }
 }
