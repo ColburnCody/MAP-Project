@@ -1,5 +1,6 @@
 class Constant {
   static const ARG_USER = 'user';
+  static const ARG_ONE_PHOTOMEMO = 'one_photomemo';
 
   static const DEV = true;
 
@@ -12,4 +13,6 @@ class Constant {
   static const PHOTOMEMO_COLLECTION = 'photoMemos';
 
   static const ARG_PHOTOMEMOLIST = 'photomemo_list';
+
+  static const MIN_ML_CONFIDENCE = 0.7;
 }
