@@ -6,7 +6,9 @@ import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
 import 'package:lesson3/screen/addphotomeme_screen.dart';
 import 'package:lesson3/screen/detailedview_screen.dart';
+import 'package:lesson3/screen/myview/mydialog.dart';
 import 'package:lesson3/screen/myview/myimage.dart';
+import 'package:lesson3/screen/sharedwith_screen.dart';
 
 class UserHomeScreen extends StatefulWidget {
   static const routeName = '/userHomeScreen';
@@ -46,6 +48,11 @@ class _UserHomeState extends State<UserHomeScreen> {
               UserAccountsDrawerHeader(
                 accountName: Text(user.displayName ?? 'N/A'),
                 accountEmail: Text(user.email),
+              ),
+              ListTile(
+                leading: Icon(Icons.people),
+                title: Text('Shared With Me'),
+                onTap: con.sharedWithMe,
               ),
               ListTile(
                 leading: Icon(Icons.exit_to_app),
@@ -126,5 +133,22 @@ class _Controller {
         Constant.ARG_ONE_PHOTOMEMO: state.photoMemoList[index],
       },
     );
+    state.render(() {});
+  }
+
+  void sharedWithMe() async {
+    try {
+      List<PhotoMemo> photoMemoList = await FirebaseController.getPhotoMemoSharedWithMe(
+        email: state.user.email,
+      );
+      await Navigator.pushNamed(state.context, SharedWithScreen.routeName, arguments: {
+        Constant.ARG_USER: state.user,
+        Constant.ARG_PHOTOMEMOLIST: photoMemoList,
+      });
+      Navigator.pop(state.context);
+    } catch (e) {
+      MyDialog.info(
+          context: state.context, title: 'get shared photomemo error', content: '$e');
+    }
   }
 }
