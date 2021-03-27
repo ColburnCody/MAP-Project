@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
+import 'package:lesson3/screen/comment_screen.dart';
 import 'package:lesson3/screen/myview/mydialog.dart';
 import 'package:lesson3/screen/myview/myimage.dart';
 
@@ -45,6 +46,10 @@ class _DetailedViewState extends State<DetailedViewScreen> {
       appBar: AppBar(
         title: Text('Detailed View'),
         actions: [
+          IconButton(
+            icon: Icon(Icons.chat),
+            onPressed: con.comment,
+          ),
           editMode
               ? IconButton(
                   icon: Icon(Icons.check),
@@ -273,5 +278,9 @@ class _Controller {
       state.onePhotoMemoTemp.sharedWith =
           value.split(RegExp('(,| )+')).map((e) => e.trim()).toList();
     }
+  }
+
+  void comment() {
+    Navigator.pushNamed(state.context, CommentScreen.routeName);
   }
 }
