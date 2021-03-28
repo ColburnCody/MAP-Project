@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lesson3/model/comment.dart';
 
 class CommentScreen extends StatefulWidget {
   static const routeName = '/commentScreen';
@@ -10,7 +11,6 @@ class CommentScreen extends StatefulWidget {
 
 class _CommentState extends State<CommentScreen> {
   _Controller con;
-  bool commentMode = false;
 
   @override
   void initState() {
@@ -25,23 +25,39 @@ class _CommentState extends State<CommentScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Comment Screen'),
-        actions: [
-          commentMode
-              ? IconButton(
-                  icon: Icon(Icons.check),
-                  onPressed: con.update,
-                )
-              : IconButton(
-                  icon: Icon(Icons.comment),
-                  onPressed: con.comment,
-                ),
-        ],
       ),
       body: Stack(
-        children: [
-          Container(),
-          TextFormField(
-            enabled: commentMode,
+        children: <Widget>[
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Container(
+              padding: EdgeInsets.only(left: 10, bottom: 10, top: 10),
+              height: 60,
+              width: double.infinity,
+              color: Colors.green,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 15,
+                  ),
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Leave a comment...',
+                        hintStyle: TextStyle(color: Colors.black),
+                        border: InputBorder.none,
+                      ),
+                      onSubmitted: (val) {
+                        con.leaveComment(val);
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -53,11 +69,17 @@ class _Controller {
   _CommentState state;
   _Controller(this.state);
 
-  void update() {
-    state.render(() => state.commentMode = false);
-  }
+  List<Comment> comments;
 
-  void comment() {
-    state.render(() => state.commentMode = true);
+  void clear() {}
+  void leaveComment(String comment) {
+    var message;
+    if (comment.length > 0) {
+      message = Comment(
+        messageContent: comment,
+        userName: 'User',
+      );
+      comments.add(message);
+    }
   }
 }
