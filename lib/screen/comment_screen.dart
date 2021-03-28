@@ -1,5 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/comment.dart';
+import 'package:lesson3/model/constant.dart';
+import 'package:lesson3/screen/myview/mydialog.dart';
 
 class CommentScreen extends StatefulWidget {
   static const routeName = '/commentScreen';
@@ -11,7 +15,8 @@ class CommentScreen extends StatefulWidget {
 
 class _CommentState extends State<CommentScreen> {
   _Controller con;
-
+  User user;
+  String progressMessage;
   @override
   void initState() {
     con = _Controller(this);
@@ -22,6 +27,8 @@ class _CommentState extends State<CommentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Map args = ModalRoute.of(context).settings.arguments;
+    user ??= args[Constant.ARG_USER];
     return Scaffold(
       appBar: AppBar(
         title: Text('Comment Screen'),
@@ -68,18 +75,14 @@ class _CommentState extends State<CommentScreen> {
 class _Controller {
   _CommentState state;
   _Controller(this.state);
-
-  List<Comment> comments;
+  Comment tempComment = Comment();
 
   void clear() {}
-  void leaveComment(String comment) {
-    var message;
-    if (comment.length > 0) {
-      message = Comment(
-        messageContent: comment,
-        userName: 'User',
-      );
-      comments.add(message);
-    }
+  void leaveComment(String comment) async {
+    MyDialog.circularProgressStart(state.context);
+
+    try {
+      Map commentInfo = await FirebaseController.uploadComment(comment: comment, uid: null, listener: null)
+    } catch (e) {}
   }
 }

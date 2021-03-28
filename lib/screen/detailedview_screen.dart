@@ -280,7 +280,8 @@ class _Controller {
     }
   }
 
-  void comment() {
-    Navigator.pushNamed(state.context, CommentScreen.routeName);
+  void comment() async {
+    await Navigator.pushNamed(state.context, CommentScreen.routeName,
+        arguments: {Constant.ARG_USER: state.user});
   }
 }

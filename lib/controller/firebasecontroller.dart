@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
 
@@ -34,6 +35,27 @@ class FirebaseController {
     await FirebaseAuth.instance.signOut();
   }
 
+  static Future<Map<String, String>> uploadComment({
+    @required File comment,
+    String filename,
+    @required String uid,
+    @required Function listener,
+  }) async {
+    filename ??= '${Constant.COMMENTS_FOLDER}/$uid/${DateTime.now()}';
+    UploadTask task = FirebaseStorage.instance.ref(filename).putFile(comment);
+    task.snapshotEvents.listen((TaskSnapshot event) {
+      double progress = event.bytesTransferred / event.totalBytes;
+      if (event.bytesTransferred == event.totalBytes) progress = null;
+      listener(progress);
+    });
+    await task;
+    String downloadURL = await FirebaseStorage.instance.ref(filename).getDownloadURL();
+    return <String, String>{
+      Constant.ARG_DOWNLOADURL: downloadURL,
+      Constant.ARG_FILENAME: filename,
+    };
+  }
+
   static Future<Map<String, String>> uploadPhotoFile({
     @required File photo,
     String filename,
@@ -55,12 +77,21 @@ class FirebaseController {
     };
   }
 
+  static Future<String> addComment(Comment comment) async {
+    var ref = await FirebaseFirestore.instance
+        .collection(Constant.COMMENTS_COLLECTION)
+        .add(comment.serialize());
+    return ref.id;
+  }
+
   static Future<String> addPhotoMemo(PhotoMemo photoMemo) async {
     var ref = await FirebaseFirestore.instance
         .collection(Constant.PHOTOMEMO_COLLECTION)
         .add(photoMemo.serialize());
     return ref.id;
   }
+
+  static Future<List<Comment>> getComments({@required String email}) async {}
 
   static Future<List<PhotoMemo>> getPhotoMemoList({@required String email}) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
