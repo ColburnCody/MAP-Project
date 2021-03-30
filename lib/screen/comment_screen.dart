@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
@@ -16,8 +17,9 @@ class CommentScreen extends StatefulWidget {
 class _CommentState extends State<CommentScreen> {
   _Controller con;
   User user;
+  String url;
   String progressMessage;
-  List<Comment> comments;
+  List<Comment> comments = [];
   @override
   void initState() {
     con = _Controller(this);
@@ -30,58 +32,38 @@ class _CommentState extends State<CommentScreen> {
   Widget build(BuildContext context) {
     Map args = ModalRoute.of(context).settings.arguments;
     user ??= args[Constant.ARG_USER];
+    url ??= args[Constant.ARG_DOWNLOADURL];
     return Scaffold(
       appBar: AppBar(
-        title: Text('Comment Screen'),
+        title: Text('Comments'),
       ),
-      body: Container(
-        child: Stack(
-          children: <Widget>[
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Container(
-                padding: EdgeInsets.only(left: 10, bottom: 10, top: 10),
-                height: 60,
-                width: double.infinity,
-                color: Colors.green,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 15,
-                    ),
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Leave a comment...',
-                          hintStyle: TextStyle(color: Colors.black),
-                          border: InputBorder.none,
-                        ),
-                        onSubmitted: (val) async {
-                          con.saveComment(val);
-                          con.saveUser();
-                          con.addComment();
-                          ListView.builder(
-                            itemCount: comments.length,
-                            itemBuilder: (BuildContext context, int index) => Container(
-                              child: ListTile(
-                                title: Text('${comments[index].userName}'),
-                                subtitle: Text('${comments[index].messageContent}'),
-                              ),
-                            ),
-                          );
-                          render(() {});
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      width: 15,
-                    ),
-                  ],
+      body: Row(
+        children: [
+          Column(
+            children: [
+              Container(
+                child: ListView.builder(
+                  itemCount: comments.length,
+                  itemBuilder: con.getComments,
                 ),
               ),
-            ),
-          ],
-        ),
+              Container(
+                alignment: Alignment.bottomLeft,
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Leave a comment...',
+                    hintStyle: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                  onSubmitted: (val) {
+                    con.addComment(val);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -92,20 +74,7 @@ class _Controller {
   _Controller(this.state);
   Comment tempComment = Comment();
 
-  void clear() {}
-  void saveUser() {
-    tempComment.userName = state.user.uid;
-  }
-
-  void saveComment(String comment) {
-    tempComment.messageContent = comment;
-  }
-
-  void addComment() {
-    state.comments.add(tempComment);
-  }
-
-  Widget postComment(BuildContext context, int index) {
+  Widget getComments(BuildContext context, int index) {
     return Card(
       margin: EdgeInsets.all(16.0),
       color: Colors.green,
@@ -114,9 +83,20 @@ class _Controller {
         borderRadius: BorderRadius.circular(30.0),
       ),
       child: ListTile(
-        title: Text('${state.comments[index].userName}'),
-        subtitle: Text('${state.comments[index].messageContent}'),
+        title: Text(state.comments[index].userName),
+        subtitle: Text(state.comments[index].messageContent),
       ),
     );
+  }
+
+  void addComment(String message) {
+    tempComment = new Comment(
+      messageContent: message,
+      userName: state.user.email,
+      commentFilename: Constant.ARG_FILENAME,
+      commentURL: state.url,
+      timestamp: DateTime.now(),
+    );
+    state.comments.add(tempComment);
   }
 }
