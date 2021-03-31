@@ -35,24 +35,29 @@ class _CommentState extends State<CommentScreen> {
     user ??= args[Constant.ARG_USER];
     fileName ??= args[Constant.ARG_FILENAME];
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Comments'),
-        ),
-        body: Column(
-          children: [
-            Container(
-              child: Text(message),
-            ),
-            Container(
-              child: TextField(
-                onSubmitted: (val) {
-                  con.addComment(val);
-                  render(() {});
-                },
-              ),
-            ),
-          ],
-        ));
+      appBar: AppBar(
+        title: Text('Comments'),
+      ),
+      body: Column(
+        children: [
+          comments.length == 0
+              ? Text(
+                  'No comments yet!',
+                  style: Theme.of(context).textTheme.headline5,
+                )
+              : ListView.builder(
+                  itemCount: comments.length,
+                  itemBuilder: con.buildList,
+                ),
+          TextField(
+            autocorrect: true,
+            onSubmitted: (val) {
+              con.addComment(val);
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -61,7 +66,26 @@ class _Controller {
   _Controller(this.state);
   Comment tempComment = Comment();
 
+  Widget buildList(BuildContext context, int index) {
+    return Card(
+      margin: EdgeInsets.all(16.0),
+      color: Colors.green,
+      elevation: 15.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      ),
+      child: ListTile(
+        title: Text('${state.comments[index].postedBy}'),
+        subtitle: Text('${state.comments[index].messageContent}'),
+      ),
+    );
+  }
+
   void addComment(String comment) {
-    state.message = comment;
+    tempComment.postedBy = state.user.email;
+    tempComment.messageContent = comment;
+    tempComment.timestamp = DateTime.now();
+    state.comments.add(tempComment);
+    state.render(() {});
   }
 }
