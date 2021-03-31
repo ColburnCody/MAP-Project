@@ -17,8 +17,9 @@ class CommentScreen extends StatefulWidget {
 class _CommentState extends State<CommentScreen> {
   _Controller con;
   User user;
-  String url;
+  String fileName;
   String progressMessage;
+  String message = 'No comments yet';
   List<Comment> comments = [];
   @override
   void initState() {
@@ -32,40 +33,26 @@ class _CommentState extends State<CommentScreen> {
   Widget build(BuildContext context) {
     Map args = ModalRoute.of(context).settings.arguments;
     user ??= args[Constant.ARG_USER];
-    url ??= args[Constant.ARG_DOWNLOADURL];
+    fileName ??= args[Constant.ARG_FILENAME];
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Comments'),
-      ),
-      body: Row(
-        children: [
-          Column(
-            children: [
-              Container(
-                child: ListView.builder(
-                  itemCount: comments.length,
-                  itemBuilder: con.getComments,
-                ),
+        appBar: AppBar(
+          title: Text('Comments'),
+        ),
+        body: Column(
+          children: [
+            Container(
+              child: Text(message),
+            ),
+            Container(
+              child: TextField(
+                onSubmitted: (val) {
+                  con.addComment(val);
+                  render(() {});
+                },
               ),
-              Container(
-                alignment: Alignment.bottomLeft,
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Leave a comment...',
-                    hintStyle: TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                  onSubmitted: (val) {
-                    con.addComment(val);
-                  },
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+            ),
+          ],
+        ));
   }
 }
 
@@ -74,29 +61,7 @@ class _Controller {
   _Controller(this.state);
   Comment tempComment = Comment();
 
-  Widget getComments(BuildContext context, int index) {
-    return Card(
-      margin: EdgeInsets.all(16.0),
-      color: Colors.green,
-      elevation: 15.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30.0),
-      ),
-      child: ListTile(
-        title: Text(state.comments[index].userName),
-        subtitle: Text(state.comments[index].messageContent),
-      ),
-    );
-  }
-
-  void addComment(String message) {
-    tempComment = new Comment(
-      messageContent: message,
-      userName: state.user.email,
-      commentFilename: Constant.ARG_FILENAME,
-      commentURL: state.url,
-      timestamp: DateTime.now(),
-    );
-    state.comments.add(tempComment);
+  void addComment(String comment) {
+    state.message = comment;
   }
 }

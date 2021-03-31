@@ -35,27 +35,6 @@ class FirebaseController {
     await FirebaseAuth.instance.signOut();
   }
 
-  static Future<Map<String, String>> uploadComment({
-    @required File comment,
-    String filename,
-    @required String uid,
-    @required Function listener,
-  }) async {
-    filename ??= '${Constant.COMMENTS_FOLDER}/$uid/${DateTime.now()}';
-    UploadTask task = FirebaseStorage.instance.ref(filename).putFile(comment);
-    task.snapshotEvents.listen((TaskSnapshot event) {
-      double progress = event.bytesTransferred / event.totalBytes;
-      if (event.bytesTransferred == event.totalBytes) progress = null;
-      listener(progress);
-    });
-    await task;
-    String downloadURL = await FirebaseStorage.instance.ref(filename).getDownloadURL();
-    return <String, String>{
-      Constant.ARG_DOWNLOADURL: downloadURL,
-      Constant.ARG_FILENAME: filename,
-    };
-  }
-
   static Future<Map<String, String>> uploadPhotoFile({
     @required File photo,
     String filename,
@@ -77,11 +56,46 @@ class FirebaseController {
     };
   }
 
+  static Future<Map<String, String>> uploadCommentFile({
+    @required File comment,
+    String filename,
+    @required String uid,
+    @required Function listener,
+  }) async {
+    filename ??= '${Constant.COMMENTS_FOLDER}/$uid/${DateTime.now()}';
+    UploadTask task = FirebaseStorage.instance.ref(filename).putFile(comment);
+    task.snapshotEvents.listen((TaskSnapshot event) {
+      double progress = event.bytesTransferred / event.totalBytes;
+      if (event.bytesTransferred == event.totalBytes) progress = null;
+      listener(progress);
+    });
+    await task;
+    String commentURL = await FirebaseStorage.instance.ref(filename).getDownloadURL();
+    return <String, String>{
+      Constant.ARG_COMMENTURL: commentURL,
+      Constant.ARG_FILENAME: filename,
+    };
+  }
+
   static Future<String> addComment(Comment comment) async {
     var ref = await FirebaseFirestore.instance
         .collection(Constant.COMMENTS_COLLECTION)
         .add(comment.serialize());
     return ref.id;
+  }
+
+  static Future<List<Comment>> getComments({@required String photoFileName}) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(Constant.COMMENTS_COLLECTION)
+        .where(Comment.PHOTO_FILENAME, isEqualTo: photoFileName)
+        .orderBy(Comment.TIMESTAMP, descending: true)
+        .get();
+
+    var result = <Comment>[];
+    querySnapshot.docs.forEach((doc) {
+      result.add(Comment.deserialize(doc.data(), doc.id));
+    });
+    return result;
   }
 
   static Future<String> addPhotoMemo(PhotoMemo photoMemo) async {
@@ -90,8 +104,6 @@ class FirebaseController {
         .add(photoMemo.serialize());
     return ref.id;
   }
-
-  static Future<List<Comment>> getComments({@required String email}) async {}
 
   static Future<List<PhotoMemo>> getPhotoMemoList({@required String email}) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance

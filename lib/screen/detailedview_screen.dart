@@ -281,7 +281,9 @@ class _Controller {
   }
 
   void comment() async {
-    await Navigator.pushNamed(state.context, CommentScreen.routeName,
-        arguments: {Constant.ARG_USER: state.user, Constant.ARG_DOWNLOADURL: state.onePhotoMemoOriginal.photoURL});
+    await Navigator.pushNamed(state.context, CommentScreen.routeName, arguments: {
+      Constant.ARG_USER: state.user,
+      Constant.ARG_FILENAME: state.onePhotoMemoOriginal.photoFilename,
+    });
   }
 }

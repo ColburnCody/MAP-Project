@@ -11,10 +11,12 @@ class Constant {
 
   static const ARG_DOWNLOADURL = 'downloadurl';
   static const ARG_FILENAME = 'filename';
+  static const ARG_COMMENTURL = 'commenturl';
   static const PHOTOMEMO_COLLECTION = 'photoMemos';
-  static const COMMENTS_COLLECTION = 'comments';
+  static const COMMENTS_COLLECTION = 'photoComments';
 
   static const ARG_PHOTOMEMOLIST = 'photomemo_list';
+  static const ARG_COMMENTlIST = 'comment_list';
 
   static const MIN_ML_CONFIDENCE = 0.7;
 }
