@@ -56,13 +56,6 @@ class FirebaseController {
     };
   }
 
-  static Future<String> addComment(Comment comment) async {
-    var ref = await FirebaseFirestore.instance
-        .collection(Constant.COMMENTS_COLLECTION)
-        .add(comment.serialize());
-    return ref.id;
-  }
-
   static Future<String> addPhotoMemo(PhotoMemo photoMemo) async {
     var ref = await FirebaseFirestore.instance
         .collection(Constant.PHOTOMEMO_COLLECTION)

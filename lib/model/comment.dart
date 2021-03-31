@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Comment {
   String postedBy;
   String messageContent;

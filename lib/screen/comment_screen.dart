@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
-import 'package:lesson3/screen/myview/mydialog.dart';
+import 'package:lesson3/model/photomemo.dart';
 
 class CommentScreen extends StatefulWidget {
   static const routeName = '/commentScreen';
@@ -17,10 +15,8 @@ class CommentScreen extends StatefulWidget {
 class _CommentState extends State<CommentScreen> {
   _Controller con;
   User user;
-  String fileName;
+  PhotoMemo photoMemo;
   String progressMessage;
-  String message = 'No comments yet';
-  List<Comment> comments = [];
   @override
   void initState() {
     con = _Controller(this);
@@ -33,26 +29,28 @@ class _CommentState extends State<CommentScreen> {
   Widget build(BuildContext context) {
     Map args = ModalRoute.of(context).settings.arguments;
     user ??= args[Constant.ARG_USER];
-    fileName ??= args[Constant.ARG_FILENAME];
+    photoMemo ??= args[Constant.ARG_ONE_PHOTOMEMO];
     return Scaffold(
       appBar: AppBar(
         title: Text('Comments'),
       ),
       body: Column(
         children: [
-          comments.length == 0
+          photoMemo.comments.length == 0
               ? Text(
                   'No comments yet!',
                   style: Theme.of(context).textTheme.headline5,
                 )
               : ListView.builder(
-                  itemCount: comments.length,
+                  itemCount: photoMemo.comments.length,
                   itemBuilder: con.buildList,
                 ),
           TextField(
             autocorrect: true,
+            keyboardType: TextInputType.multiline,
             onSubmitted: (val) {
               con.addComment(val);
+              render(() {});
             },
           ),
         ],
@@ -75,17 +73,16 @@ class _Controller {
         borderRadius: BorderRadius.circular(30.0),
       ),
       child: ListTile(
-        title: Text('${state.comments[index].postedBy}'),
-        subtitle: Text('${state.comments[index].messageContent}'),
+        title: Text('${state.photoMemo.comments[index].postedBy}'),
+        subtitle: Text('${state.photoMemo.comments[index].messageContent}'),
       ),
     );
   }
 
-  void addComment(String comment) {
+  void addComment(String value) {
     tempComment.postedBy = state.user.email;
-    tempComment.messageContent = comment;
+    tempComment.messageContent = value;
     tempComment.timestamp = DateTime.now();
-    state.comments.add(tempComment);
-    state.render(() {});
+    state.photoMemo.comments.add(tempComment);
   }
 }
