@@ -25,6 +25,8 @@ class _LeaveCommentState extends State<LeaveCommentScreen> {
     con = _Controller(this);
   }
 
+  render(fn) => setState(fn);
+
   @override
   Widget build(BuildContext context) {
     Map args = ModalRoute.of(context).settings.arguments;
@@ -65,5 +67,6 @@ class _Controller extends _LeaveCommentState {
     Map<String, dynamic> updateInfo;
     updateInfo[PhotoMemo.COMMENTS] = state.photoMemo.comments;
     await FirebaseController.updatePhotoMemo(state.photoMemo.docId, updateInfo);
+    state.render(() {});
   }
 }
