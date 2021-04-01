@@ -35,6 +35,20 @@ class FirebaseController {
     await FirebaseAuth.instance.signOut();
   }
 
+  static Future<Map<String, String>> uploadCommentFile({
+    @required File comment,
+    String filename,
+    @required String uid,
+  }) async {
+    filename ??= '${Constant.COMMENTS}/$uid/${DateTime.now()}';
+    UploadTask task = FirebaseStorage.instance.ref(filename).putFile(comment);
+    String commentURL = await FirebaseStorage.instance.ref(filename).getDownloadURL();
+    return <String, String>{
+      Constant.ARG_COMMENTURL: commentURL,
+      Constant.ARG_COMMENT_FILENAME: filename,
+    };
+  }
+
   static Future<Map<String, String>> uploadPhotoFile({
     @required File photo,
     String filename,
@@ -63,6 +77,13 @@ class FirebaseController {
     return ref.id;
   }
 
+  static Future<String> addComment(Comment comment) async {
+    var ref = await FirebaseFirestore.instance
+        .collection(Constant.COMMENTS_COLLECTION)
+        .add(comment.serialize());
+    return ref.id;
+  }
+
   static Future<List<PhotoMemo>> getPhotoMemoList({@required String email}) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Constant.PHOTOMEMO_COLLECTION)
@@ -73,6 +94,22 @@ class FirebaseController {
     var result = <PhotoMemo>[];
     querySnapshot.docs.forEach((doc) {
       result.add(PhotoMemo.deserialize(doc.data(), doc.id));
+    });
+    return result;
+  }
+
+  static Future<List<Comment>> getCommentList({
+    @required String photoURL,
+  }) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(Constant.COMMENTS_COLLECTION)
+        .where(Comment.PHOTOURL, isEqualTo: photoURL)
+        .orderBy(Comment.TIMESTAMP, descending: true)
+        .get();
+
+    var result = <Comment>[];
+    querySnapshot.docs.forEach((doc) {
+      result.add(Comment.deserialize(doc.data(), doc.id));
     });
     return result;
   }
@@ -95,6 +132,22 @@ class FirebaseController {
         .collection(Constant.PHOTOMEMO_COLLECTION)
         .doc(docId)
         .update(updateInfo);
+  }
+
+  static Future<List<Comment>> getCommentSharedWithMe({
+    @required String photoURL,
+  }) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(Constant.COMMENTS_COLLECTION)
+        .where(Comment.PHOTOURL, isEqualTo: photoURL)
+        .orderBy(Comment.TIMESTAMP, descending: true)
+        .get();
+
+    var result = <Comment>[];
+    querySnapshot.docs.forEach((doc) {
+      result.add(Comment.deserialize(doc.data(), doc.id));
+    });
+    return result;
   }
 
   static Future<List<PhotoMemo>> getPhotoMemoSharedWithMe(

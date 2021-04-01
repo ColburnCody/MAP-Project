@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
+import 'package:lesson3/screen/myview/mydialog.dart';
 
 class LeaveCommentScreen extends StatefulWidget {
   static const routeName = '/leaveCommentScreen';
@@ -18,6 +21,7 @@ class _LeaveCommentState extends State<LeaveCommentScreen> {
   _Controller con;
   User user;
   PhotoMemo photoMemo;
+  List<Comment> comments;
 
   @override
   void initState() {
@@ -60,13 +64,21 @@ class _Controller extends _LeaveCommentState {
   Comment tempComment = Comment();
 
   void addComment(String comment) async {
-    tempComment.postedBy = state.user.email;
-    tempComment.messageContent = comment;
-    tempComment.timestamp = DateTime.now();
-    state.photoMemo.comments.insert(0, tempComment);
-    Map<String, dynamic> updateInfo;
-    updateInfo[PhotoMemo.COMMENTS] = state.photoMemo.comments;
-    await FirebaseController.updatePhotoMemo(state.photoMemo.docId, updateInfo);
-    state.render(() {});
+    final filename = 'comment';
+    var commFile = await File(filename).writeAsString(comment);
+    try {
+      Map commentInfo = await FirebaseController.uploadCommentFile(
+          comment: commFile, uid: state.user.uid);
+
+      tempComment.postedBy = state.user.email;
+      tempComment.messageContent = comment;
+      tempComment.timestamp = DateTime.now();
+      tempComment.photoURL = photoMemo.photoURL;
+      String docId = await FirebaseController.addComment(tempComment);
+      tempComment.docId = docId;
+      state.comments.insert(0, tempComment);
+    } catch (e) {
+      MyDialog.info(context: state.context, title: 'Comment error', content: '$e');
+    }
   }
 }

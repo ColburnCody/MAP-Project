@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lesson3/controller/firebasecontroller.dart';
+import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
 import 'package:lesson3/screen/comment_screen.dart';
@@ -85,9 +87,12 @@ class _Controller {
   _Controller(this.state);
 
   void goToComments(int index) async {
+    List<Comment> comments = await FirebaseController.getCommentSharedWithMe(
+        photoURL: state.photoMemoList[index].photoURL);
     await Navigator.pushNamed(state.context, CommentScreen.routeName, arguments: {
       Constant.ARG_USER: state.user,
       Constant.ARG_ONE_PHOTOMEMO: state.photoMemoList[index],
+      Constant.ARG_COMMENTlIST: comments,
     });
     state.render(() {});
   }

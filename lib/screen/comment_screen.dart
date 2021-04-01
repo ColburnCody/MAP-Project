@@ -18,6 +18,7 @@ class _CommentState extends State<CommentScreen> {
   _Controller con;
   User user;
   PhotoMemo photoMemo;
+  List<Comment> comments;
   String progressMessage;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   @override
@@ -35,6 +36,7 @@ class _CommentState extends State<CommentScreen> {
     Map args = ModalRoute.of(context).settings.arguments;
     user ??= args[Constant.ARG_USER];
     photoMemo ??= args[Constant.ARG_ONE_PHOTOMEMO];
+    comments ??= args[Constant.ARG_COMMENTlIST];
     return Scaffold(
       appBar: AppBar(
         title: Text('Comments'),
@@ -46,7 +48,7 @@ class _CommentState extends State<CommentScreen> {
         ],
       ),
       body: Column(children: [
-        photoMemo.comments.length == 0
+        comments.length == 0
             ? Text(
                 'No comments yet!',
                 style: Theme.of(context).textTheme.headline5,
@@ -54,15 +56,15 @@ class _CommentState extends State<CommentScreen> {
             : ListView.builder(
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
-                itemCount: photoMemo.comments.length,
+                itemCount: comments.length,
                 itemBuilder: (BuildContext context, int index) => Container(
                   child: ListTile(
-                    title: Text('${photoMemo.comments[index].postedBy} says: '),
+                    title: Text('${comments[index].postedBy} says: '),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('${photoMemo.comments[index].messageContent}'),
-                        Text('${photoMemo.comments[index].timestamp}'),
+                        Text('${comments[index].messageContent}'),
+                        Text('${comments[index].timestamp}'),
                       ],
                     ),
                   ),
@@ -81,6 +83,7 @@ class _Controller {
     await Navigator.pushNamed(state.context, LeaveCommentScreen.routeName, arguments: {
       Constant.ARG_USER: state.user,
       Constant.ARG_ONE_PHOTOMEMO: state.photoMemo,
+      Constant.COMMENTS: state.comments,
     });
     state.render(() {});
   }

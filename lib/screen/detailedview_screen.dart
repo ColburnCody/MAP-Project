@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
+import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
 import 'package:lesson3/screen/comment_screen.dart';
@@ -281,8 +282,11 @@ class _Controller {
   }
 
   void comment() async {
+    List<Comment> commentList = await FirebaseController.getCommentList(
+        photoURL: state.onePhotoMemoOriginal.photoURL);
     await Navigator.pushNamed(state.context, CommentScreen.routeName, arguments: {
       Constant.ARG_USER: state.user,
+      Constant.ARG_COMMENTlIST: commentList,
       Constant.ARG_ONE_PHOTOMEMO: state.onePhotoMemoOriginal,
     });
     state.render(() {});
