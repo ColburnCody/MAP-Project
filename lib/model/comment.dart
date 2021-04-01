@@ -23,22 +23,4 @@ class Comment {
     this.messageContent = c.messageContent;
     this.timestamp = c.timestamp;
   }
-
-  Map<String, dynamic> serialize() {
-    return <String, dynamic>{
-      POSTEDBY: this.postedBy,
-      MESSAGECONTENT: this.messageContent,
-      TIMESTAMP: this.timestamp,
-    };
-  }
-
-  static Comment deserialize(Map<String, dynamic> doc, String docId) {
-    return Comment(
-      postedBy: doc[POSTEDBY],
-      messageContent: doc[MESSAGECONTENT],
-      timestamp: doc[TIMESTAMP] == null
-          ? null
-          : DateTime.fromMillisecondsSinceEpoch(doc[TIMESTAMP].millisecondsSinceEpoch),
-    );
-  }
 }

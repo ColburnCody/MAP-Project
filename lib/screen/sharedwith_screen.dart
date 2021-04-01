@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
+import 'package:lesson3/screen/comment_screen.dart';
 import 'package:lesson3/screen/myview/myimage.dart';
 
 class SharedWithScreen extends StatefulWidget {
@@ -51,6 +52,10 @@ class _SharedWithState extends State<SharedWithScreen> {
                         context: context,
                       ),
                     ),
+                    IconButton(
+                      icon: Icon(Icons.comment),
+                      onPressed: () => con.goToComments(index),
+                    ),
                     Text(
                       'Memo: ${photoMemoList[index].memo}',
                       style: Theme.of(context).textTheme.headline6,
@@ -78,4 +83,12 @@ class _SharedWithState extends State<SharedWithScreen> {
 class _Controller {
   _SharedWithState state;
   _Controller(this.state);
+
+  void goToComments(int index) async {
+    await Navigator.pushNamed(state.context, CommentScreen.routeName, arguments: {
+      Constant.ARG_USER: state.user,
+      Constant.ARG_ONE_PHOTOMEMO: state.photoMemoList[index],
+    });
+    state.render(() {});
+  }
 }

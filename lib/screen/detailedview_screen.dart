@@ -228,6 +228,10 @@ class _Controller {
           state.onePhotoMemoOriginal.sharedWith, state.onePhotoMemoTemp.sharedWith))
         updateInfo[PhotoMemo.SHARED_WITH] = state.onePhotoMemoTemp.sharedWith;
 
+      if (!listEquals(
+          state.onePhotoMemoOriginal.comments, state.onePhotoMemoTemp.comments))
+        updateInfo[PhotoMemo.COMMENTS] = state.onePhotoMemoTemp.comments;
+
       updateInfo[PhotoMemo.TIMESTAMP] = DateTime.now();
 
       await FirebaseController.updatePhotoMemo(state.onePhotoMemoTemp.docId, updateInfo);
@@ -285,5 +289,6 @@ class _Controller {
       Constant.ARG_USER: state.user,
       Constant.ARG_ONE_PHOTOMEMO: state.onePhotoMemoOriginal,
     });
+    state.render(() {});
   }
 }

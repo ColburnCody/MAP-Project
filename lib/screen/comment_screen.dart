@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
+import 'package:lesson3/screen/leavecomment_screen.dart';
 
 class CommentScreen extends StatefulWidget {
   static const routeName = '/commentScreen';
@@ -17,13 +18,16 @@ class _CommentState extends State<CommentScreen> {
   User user;
   PhotoMemo photoMemo;
   String progressMessage;
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
   @override
   void initState() {
     con = _Controller(this);
     super.initState();
   }
 
-  void render(fn) => setState(fn);
+  void render(fn) {
+    setState(fn);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,28 +37,37 @@ class _CommentState extends State<CommentScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Comments'),
-      ),
-      body: Column(
-        children: [
-          photoMemo.comments.length == 0
-              ? Text(
-                  'No comments yet!',
-                  style: Theme.of(context).textTheme.headline5,
-                )
-              : ListView.builder(
-                  itemCount: photoMemo.comments.length,
-                  itemBuilder: con.buildList,
-                ),
-          TextField(
-            autocorrect: true,
-            keyboardType: TextInputType.multiline,
-            onSubmitted: (val) {
-              con.addComment(val);
-              render(() {});
-            },
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.post_add),
+            onPressed: con.addComment,
           ),
         ],
       ),
+      body: Column(children: [
+        photoMemo.comments.length == 0
+            ? Text(
+                'No comments yet!',
+                style: Theme.of(context).textTheme.headline5,
+              )
+            : ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: photoMemo.comments.length,
+                itemBuilder: (BuildContext context, int index) => Container(
+                  child: ListTile(
+                    title: Text('${photoMemo.comments[index].postedBy} says: '),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${photoMemo.comments[index].messageContent}'),
+                        Text('${photoMemo.comments[index].timestamp}'),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+      ]),
     );
   }
 }
@@ -62,27 +75,12 @@ class _CommentState extends State<CommentScreen> {
 class _Controller {
   _CommentState state;
   _Controller(this.state);
-  Comment tempComment = Comment();
 
-  Widget buildList(BuildContext context, int index) {
-    return Card(
-      margin: EdgeInsets.all(16.0),
-      color: Colors.green,
-      elevation: 15.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30.0),
-      ),
-      child: ListTile(
-        title: Text('${state.photoMemo.comments[index].postedBy}'),
-        subtitle: Text('${state.photoMemo.comments[index].messageContent}'),
-      ),
-    );
-  }
-
-  void addComment(String value) {
-    tempComment.postedBy = state.user.email;
-    tempComment.messageContent = value;
-    tempComment.timestamp = DateTime.now();
-    state.photoMemo.comments.add(tempComment);
+  void addComment() async {
+    await Navigator.pushNamed(state.context, LeaveCommentScreen.routeName, arguments: {
+      Constant.ARG_USER: state.user,
+      Constant.ARG_ONE_PHOTOMEMO: state.photoMemo,
+    });
+    state.render(() {});
   }
 }

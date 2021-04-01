@@ -174,10 +174,10 @@ class _Controller {
       tempMemo.timestamp = DateTime.now();
       tempMemo.createdBy = state.user.email;
       tempMemo.imageLabels = imageLabels;
+      tempMemo.comments = [];
       String docId = await FirebaseController.addPhotoMemo(tempMemo);
       tempMemo.docId = docId;
       state.photoMemoList.insert(0, tempMemo);
-      tempMemo.comments = [];
 
       MyDialog.circularProgressStop(state.context);
       Navigator.pop(state.context); // return to User Home Screen
