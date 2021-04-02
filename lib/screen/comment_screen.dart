@@ -19,17 +19,14 @@ class _CommentState extends State<CommentScreen> {
   User user;
   PhotoMemo photoMemo;
   List<Comment> comments;
-  String progressMessage;
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     con = _Controller(this);
     super.initState();
   }
 
-  void render(fn) {
-    setState(fn);
-  }
+  render(fn) => setState(fn);
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +64,7 @@ class _CommentState extends State<CommentScreen> {
                         Text('${comments[index].timestamp}'),
                       ],
                     ),
+                    onTap: () => con.reply(user.email),
                   ),
                 ),
               ),
@@ -79,11 +77,21 @@ class _Controller {
   _CommentState state;
   _Controller(this.state);
 
+  void reply(String email) async {
+    await Navigator.pushNamed(state.context, LeaveCommentScreen.routeName, arguments: {
+      Constant.ARG_USER: state.user,
+      Constant.ARG_ONE_PHOTOMEMO: state.photoMemo,
+      Constant.ARG_COMMENTlIST: state.comments,
+      Constant.REPLY: email,
+    });
+    state.render(() {});
+  }
+
   void addComment() async {
     await Navigator.pushNamed(state.context, LeaveCommentScreen.routeName, arguments: {
       Constant.ARG_USER: state.user,
       Constant.ARG_ONE_PHOTOMEMO: state.photoMemo,
-      Constant.COMMENTS: state.comments,
+      Constant.ARG_COMMENTlIST: state.comments,
     });
     state.render(() {});
   }

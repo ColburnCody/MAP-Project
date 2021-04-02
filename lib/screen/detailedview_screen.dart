@@ -287,7 +287,7 @@ class _Controller {
     await Navigator.pushNamed(state.context, CommentScreen.routeName, arguments: {
       Constant.ARG_USER: state.user,
       Constant.ARG_COMMENTlIST: commentList,
-      Constant.ARG_ONE_PHOTOMEMO: state.onePhotoMemoOriginal,
+      Constant.ARG_ONE_PHOTOMEMO: state.onePhotoMemoTemp,
     });
     state.render(() {});
   }

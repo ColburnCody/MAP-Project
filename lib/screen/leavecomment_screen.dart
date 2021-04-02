@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
@@ -21,21 +19,21 @@ class _LeaveCommentState extends State<LeaveCommentScreen> {
   _Controller con;
   User user;
   PhotoMemo photoMemo;
-  List<Comment> comments;
-
+  String reply;
+  List<Comment> comments = [];
   @override
   void initState() {
     super.initState();
     con = _Controller(this);
   }
 
-  render(fn) => setState(fn);
-
   @override
   Widget build(BuildContext context) {
     Map args = ModalRoute.of(context).settings.arguments;
     user ??= args[Constant.ARG_USER];
     photoMemo ??= args[Constant.ARG_ONE_PHOTOMEMO];
+    comments ??= args[Constant.ARG_COMMENTlIST];
+    reply ??= args[Constant.REPLY];
     return Scaffold(
       appBar: AppBar(
         title: Text('Leave a comment!'),
@@ -48,7 +46,6 @@ class _LeaveCommentState extends State<LeaveCommentScreen> {
               autofocus: true,
               onSubmitted: (val) {
                 con.addComment(val);
-                Navigator.pop(context);
               },
             ),
           ),
@@ -64,19 +61,16 @@ class _Controller extends _LeaveCommentState {
   Comment tempComment = Comment();
 
   void addComment(String comment) async {
-    final filename = 'comment';
-    var commFile = await File(filename).writeAsString(comment);
     try {
-      Map commentInfo = await FirebaseController.uploadCommentFile(
-          comment: commFile, uid: state.user.uid);
-
       tempComment.postedBy = state.user.email;
-      tempComment.messageContent = comment;
+      tempComment.messageContent =
+          state.reply == null ? comment : '@${state.reply}, ' + comment;
       tempComment.timestamp = DateTime.now();
-      tempComment.photoURL = photoMemo.photoURL;
+      tempComment.photoURL = state.photoMemo.photoURL;
       String docId = await FirebaseController.addComment(tempComment);
       tempComment.docId = docId;
-      state.comments.insert(0, tempComment);
+      comments.add(tempComment);
+      Navigator.pop(state.context);
     } catch (e) {
       MyDialog.info(context: state.context, title: 'Comment error', content: '$e');
     }

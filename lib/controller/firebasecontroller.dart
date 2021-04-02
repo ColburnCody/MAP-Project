@@ -35,20 +35,6 @@ class FirebaseController {
     await FirebaseAuth.instance.signOut();
   }
 
-  static Future<Map<String, String>> uploadCommentFile({
-    @required File comment,
-    String filename,
-    @required String uid,
-  }) async {
-    filename ??= '${Constant.COMMENTS}/$uid/${DateTime.now()}';
-    UploadTask task = FirebaseStorage.instance.ref(filename).putFile(comment);
-    String commentURL = await FirebaseStorage.instance.ref(filename).getDownloadURL();
-    return <String, String>{
-      Constant.ARG_COMMENTURL: commentURL,
-      Constant.ARG_COMMENT_FILENAME: filename,
-    };
-  }
-
   static Future<Map<String, String>> uploadPhotoFile({
     @required File photo,
     String filename,
@@ -139,7 +125,7 @@ class FirebaseController {
   }) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Constant.COMMENTS_COLLECTION)
-        .where(Comment.PHOTOURL, isEqualTo: photoURL)
+        .where(PhotoMemo.PHOTO_URL, isEqualTo: photoURL)
         .orderBy(Comment.TIMESTAMP, descending: true)
         .get();
 

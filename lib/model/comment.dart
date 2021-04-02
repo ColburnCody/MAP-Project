@@ -9,6 +9,7 @@ class Comment {
   static const MESSAGECONTENT = 'messageContent';
   static const PHOTOURL = 'photoURL';
   static const TIMESTAMP = 'timestamp';
+
   Comment({
     this.docId,
     this.postedBy,

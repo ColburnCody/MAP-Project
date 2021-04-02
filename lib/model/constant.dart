@@ -7,12 +7,10 @@ class Constant {
   static const SRC_CAMERA = 'camera';
   static const SRC_GALLERY = 'gallery';
   static const PHOTOIMAGE_FOLDER = 'photo_images';
-
+  static const COMMENTS_FOLDER = 'comments_folder';
+  static const REPLY = 'email';
   static const ARG_DOWNLOADURL = 'downloadurl';
   static const ARG_FILENAME = 'filename';
-  static const ARG_COMMENT_FILENAME = 'comment_filename';
-  static const ARG_COMMENTURL = 'commenturl';
-  static const COMMENTS = 'comments';
   static const PHOTOMEMO_COLLECTION = 'photoMemos';
   static const COMMENTS_COLLECTION = 'comments';
 
