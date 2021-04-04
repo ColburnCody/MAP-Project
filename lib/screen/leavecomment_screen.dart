@@ -21,6 +21,9 @@ class _LeaveCommentState extends State<LeaveCommentScreen> {
   PhotoMemo photoMemo;
   String reply;
   List<Comment> comments = [];
+
+  void render(fn) => setState(fn);
+
   @override
   void initState() {
     super.initState();

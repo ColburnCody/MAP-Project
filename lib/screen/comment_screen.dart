@@ -26,7 +26,7 @@ class _CommentState extends State<CommentScreen> {
     super.initState();
   }
 
-  render(fn) => setState(fn);
+  void render(fn) => setState(fn);
 
   @override
   Widget build(BuildContext context) {
@@ -44,31 +44,21 @@ class _CommentState extends State<CommentScreen> {
           ),
         ],
       ),
-      body: Column(children: [
-        comments.length == 0
-            ? Text(
-                'No comments yet!',
-                style: Theme.of(context).textTheme.headline5,
-              )
-            : ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: comments.length,
-                itemBuilder: (BuildContext context, int index) => Container(
-                  child: ListTile(
-                    title: Text('${comments[index].postedBy} says: '),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('${comments[index].messageContent}'),
-                        Text('${comments[index].timestamp}'),
-                      ],
-                    ),
-                    onTap: () => con.reply(user.email),
-                  ),
+      body: Column(
+        children: [
+          comments.length == 0
+              ? Text(
+                  'No comments yet!',
+                  style: Theme.of(context).textTheme.headline5,
+                )
+              : ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: comments.length,
+                  itemBuilder: con.buildList,
                 ),
-              ),
-      ]),
+        ],
+      ),
     );
   }
 }
@@ -76,6 +66,21 @@ class _CommentState extends State<CommentScreen> {
 class _Controller {
   _CommentState state;
   _Controller(this.state);
+
+  Widget buildList(BuildContext context, int index) {
+    return Container(
+        child: ListTile(
+      title: Text('${state.comments[index].postedBy} says: '),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('${state.comments[index].messageContent}'),
+          Text('${state.comments[index].timestamp}'),
+        ],
+      ),
+      onTap: () => reply(state.user.email),
+    ));
+  }
 
   void reply(String email) async {
     await Navigator.pushNamed(state.context, LeaveCommentScreen.routeName, arguments: {

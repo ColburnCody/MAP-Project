@@ -8,6 +8,7 @@ import 'package:lesson3/screen/addphotomeme_screen.dart';
 import 'package:lesson3/screen/detailedview_screen.dart';
 import 'package:lesson3/screen/myview/mydialog.dart';
 import 'package:lesson3/screen/myview/myimage.dart';
+import 'package:lesson3/screen/notifications_screen.dart';
 import 'package:lesson3/screen/sharedwith_screen.dart';
 
 class UserHomeScreen extends StatefulWidget {
@@ -75,6 +76,12 @@ class _UserHomeState extends State<UserHomeScreen> {
                     icon: Icon(Icons.search),
                     onPressed: con.search,
                   ),
+            IconButton(
+              icon: Icon(Icons.notifications),
+              onPressed: () {
+                Navigator.pushNamed(context, NotificationsScreen.routeName);
+              },
+            ),
           ],
         ),
         drawer: Drawer(
