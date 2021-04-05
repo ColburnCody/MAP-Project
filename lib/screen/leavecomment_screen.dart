@@ -72,7 +72,7 @@ class _Controller extends _LeaveCommentState {
       tempComment.photoURL = state.photoMemo.photoURL;
       String docId = await FirebaseController.addComment(tempComment);
       tempComment.docId = docId;
-      comments.add(tempComment);
+      state.comments.add(tempComment);
       Navigator.pop(state.context);
     } catch (e) {
       MyDialog.info(context: state.context, title: 'Comment error', content: '$e');

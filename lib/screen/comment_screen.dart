@@ -44,21 +44,17 @@ class _CommentState extends State<CommentScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          comments.length == 0
-              ? Text(
-                  'No comments yet!',
-                  style: Theme.of(context).textTheme.headline5,
-                )
-              : ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: comments.length,
-                  itemBuilder: con.buildList,
-                ),
-        ],
-      ),
+      body: comments.length == 0
+          ? Text(
+              'No comments yet!',
+              style: Theme.of(context).textTheme.headline5,
+            )
+          : ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: comments.length,
+              itemBuilder: con.buildList,
+            ),
     );
   }
 }
@@ -83,6 +79,8 @@ class _Controller {
   }
 
   void reply(String email) async {
+    state.comments =
+        await FirebaseController.getCommentList(photoURL: state.photoMemo.photoURL);
     await Navigator.pushNamed(state.context, LeaveCommentScreen.routeName, arguments: {
       Constant.ARG_USER: state.user,
       Constant.ARG_ONE_PHOTOMEMO: state.photoMemo,
@@ -93,6 +91,8 @@ class _Controller {
   }
 
   void addComment() async {
+    state.comments =
+        await FirebaseController.getCommentList(photoURL: state.photoMemo.photoURL);
     await Navigator.pushNamed(state.context, LeaveCommentScreen.routeName, arguments: {
       Constant.ARG_USER: state.user,
       Constant.ARG_ONE_PHOTOMEMO: state.photoMemo,

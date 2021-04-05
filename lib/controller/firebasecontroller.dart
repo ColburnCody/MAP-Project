@@ -90,7 +90,7 @@ class FirebaseController {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Constant.COMMENTS_COLLECTION)
         .where(Comment.PHOTOURL, isEqualTo: photoURL)
-        .orderBy(Comment.TIMESTAMP, descending: true)
+        .orderBy(Comment.TIMESTAMP, descending: false)
         .get();
 
     var result = <Comment>[];
