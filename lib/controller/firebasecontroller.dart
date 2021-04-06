@@ -95,7 +95,7 @@ class FirebaseController {
   static Future<List<Notif>> getNotifications({@required String email}) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Constant.NOTIFICATIONS_COLLECTION)
-        .where(Notif.NOTIFIED, isEqualTo: email)
+        .where(Notif.NOTIFIED, arrayContains: email)
         .orderBy(Notif.TIMESTAMP, descending: false)
         .get();
 

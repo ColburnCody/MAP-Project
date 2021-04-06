@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/constant.dart';
+import 'package:lesson3/model/notif.dart';
 import 'package:lesson3/model/photomemo.dart';
 import 'package:lesson3/screen/addphotomeme_screen.dart';
 import 'package:lesson3/screen/detailedview_screen.dart';
@@ -23,6 +24,7 @@ class _UserHomeState extends State<UserHomeScreen> {
   _Controller con;
   User user;
   List<PhotoMemo> photoMemoList;
+  List<Notif> notifications;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
@@ -38,6 +40,7 @@ class _UserHomeState extends State<UserHomeScreen> {
     Map args = ModalRoute.of(context).settings.arguments;
     user ??= args[Constant.ARG_USER];
     photoMemoList ??= args[Constant.ARG_PHOTOMEMOLIST];
+    notifications ??= args[Constant.ARG_NOTIFICATIONS];
     return WillPopScope(
       onWillPop: () => Future.value(false), // disable Android system back button
       child: Scaffold(
@@ -76,12 +79,18 @@ class _UserHomeState extends State<UserHomeScreen> {
                     icon: Icon(Icons.search),
                     onPressed: con.search,
                   ),
-            IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () {
-                Navigator.pushNamed(context, NotificationsScreen.routeName);
-              },
-            ),
+            notifications.length == 0
+                ? IconButton(
+                    icon: Icon(Icons.notifications),
+                    onPressed: con.gotoNotifications,
+                  )
+                : IconButton(
+                    icon: Icon(
+                      Icons.notification_important,
+                      color: Colors.red,
+                    ),
+                    onPressed: con.gotoNotifications,
+                  ),
           ],
         ),
         drawer: Drawer(
@@ -195,6 +204,16 @@ class _Controller {
       },
     );
     state.render(() {});
+  }
+
+  void gotoNotifications() async {
+    List<Notif> notifications =
+        await FirebaseController.getNotifications(email: state.user.email);
+    await Navigator.pushNamed(state.context, NotificationsScreen.routeName, arguments: {
+      Constant.ARG_USER: state.user,
+      Constant.ARG_NOTIFICATIONS: notifications,
+    });
+    Navigator.pop(state.context);
   }
 
   void sharedWithMe() async {

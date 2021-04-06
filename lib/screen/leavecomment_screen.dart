@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
+import 'package:lesson3/model/notif.dart';
 import 'package:lesson3/model/photomemo.dart';
 import 'package:lesson3/screen/myview/mydialog.dart';
 
@@ -21,7 +22,6 @@ class _LeaveCommentState extends State<LeaveCommentScreen> {
   PhotoMemo photoMemo;
   String reply;
   List<Comment> comments = [];
-
   void render(fn) => setState(fn);
 
   @override
@@ -62,6 +62,7 @@ class _Controller extends _LeaveCommentState {
   _LeaveCommentState state;
   _Controller(this.state);
   Comment tempComment = Comment();
+  Notif tempNotif = Notif();
 
   void addComment(String comment) async {
     try {
@@ -73,6 +74,14 @@ class _Controller extends _LeaveCommentState {
       String docId = await FirebaseController.addComment(tempComment);
       tempComment.docId = docId;
       state.comments.add(tempComment);
+      tempNotif.sender = state.user.email;
+      tempNotif.message = state.photoMemo.createdBy == tempComment.postedBy
+          ? '${tempNotif.sender} left a comment on a photo shared with you'
+          : '${tempNotif.sender} left a comment on your photo';
+      tempNotif.notified = state.photoMemo.sharedWith;
+      tempNotif.type = 'comment';
+      String notifdocId = await FirebaseController.addNotification(tempNotif);
+      tempNotif.docId = notifdocId;
       Navigator.pop(state.context);
     } catch (e) {
       MyDialog.info(context: state.context, title: 'Comment error', content: '$e');

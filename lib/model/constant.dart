@@ -17,6 +17,7 @@ class Constant {
 
   static const ARG_PHOTOMEMOLIST = 'photomemo_list';
   static const ARG_COMMENTlIST = 'comment_list';
+  static const ARG_NOTIFICATIONS = 'notifications';
 
   static const MIN_ML_CONFIDENCE = 0.7;
 }

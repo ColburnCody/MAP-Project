@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/constant.dart';
+import 'package:lesson3/model/notif.dart';
 import 'package:lesson3/model/photomemo.dart';
 import 'package:lesson3/screen/myview/mydialog.dart';
 
@@ -140,6 +141,7 @@ class _Controller {
   _AddPhotoMemoState state;
   _Controller(this.state);
   PhotoMemo tempMemo = PhotoMemo();
+  Notif tempNotif = Notif();
 
   void save() async {
     if (!state.formKey.currentState.validate()) return;
@@ -177,7 +179,12 @@ class _Controller {
       String docId = await FirebaseController.addPhotoMemo(tempMemo);
       tempMemo.docId = docId;
       state.photoMemoList.insert(0, tempMemo);
-
+      tempNotif.sender = state.user.email;
+      tempNotif.message = '${state.user.email} shared a photo with you';
+      tempNotif.notified = tempMemo.sharedWith;
+      tempNotif.type = 'sharedWith';
+      String notifdocId = await FirebaseController.addNotification(tempNotif);
+      tempNotif.docId = notifdocId;
       MyDialog.circularProgressStop(state.context);
       Navigator.pop(state.context); // return to User Home Screen
     } catch (e) {
