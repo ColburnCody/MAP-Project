@@ -13,6 +13,7 @@ class Constant {
   static const ARG_FILENAME = 'filename';
   static const PHOTOMEMO_COLLECTION = 'photoMemos';
   static const COMMENTS_COLLECTION = 'comments';
+  static const NOTIFICATIONS_COLLECTION = 'notifications';
 
   static const ARG_PHOTOMEMOLIST = 'photomemo_list';
   static const ARG_COMMENTlIST = 'comment_list';

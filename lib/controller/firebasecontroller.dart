@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
+import 'package:lesson3/model/notif.dart';
 
 class FirebaseController {
   static Future<User> signIn({
@@ -70,6 +71,13 @@ class FirebaseController {
     return ref.id;
   }
 
+  static Future<String> addNotification(Notif notification) async {
+    var ref = await FirebaseFirestore.instance
+        .collection(Constant.NOTIFICATIONS_COLLECTION)
+        .add(notification.serialize());
+    return ref.id;
+  }
+
   static Future<List<PhotoMemo>> getPhotoMemoList({@required String email}) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Constant.PHOTOMEMO_COLLECTION)
@@ -80,6 +88,20 @@ class FirebaseController {
     var result = <PhotoMemo>[];
     querySnapshot.docs.forEach((doc) {
       result.add(PhotoMemo.deserialize(doc.data(), doc.id));
+    });
+    return result;
+  }
+
+  static Future<List<Notif>> getNotifications({@required String email}) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(Constant.NOTIFICATIONS_COLLECTION)
+        .where(Notif.NOTIFIED, isEqualTo: email)
+        .orderBy(Notif.TIMESTAMP, descending: false)
+        .get();
+
+    var result = <Notif>[];
+    querySnapshot.docs.forEach((doc) {
+      result.add(Notif.deserialize(doc.data(), doc.id));
     });
     return result;
   }
@@ -157,6 +179,13 @@ class FirebaseController {
         .doc(p.docId)
         .delete();
     await FirebaseStorage.instance.ref().child(p.photoFilename).delete();
+  }
+
+  static Future<void> deleteNotification(Notif n) async {
+    await FirebaseFirestore.instance
+        .collection(Constant.NOTIFICATIONS_COLLECTION)
+        .doc(n.docId)
+        .delete();
   }
 
   static Future<List<PhotoMemo>> searchImage({
