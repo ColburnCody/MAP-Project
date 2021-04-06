@@ -94,6 +94,5 @@ class _Controller {
       Constant.ARG_ONE_PHOTOMEMO: state.photoMemoList[index],
       Constant.ARG_COMMENTlIST: comments,
     });
-    state.render(() {});
   }
 }

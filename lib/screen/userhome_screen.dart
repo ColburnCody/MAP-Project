@@ -213,7 +213,6 @@ class _Controller {
       Constant.ARG_USER: state.user,
       Constant.ARG_NOTIFICATIONS: notifications,
     });
-    Navigator.pop(state.context);
   }
 
   void sharedWithMe() async {
