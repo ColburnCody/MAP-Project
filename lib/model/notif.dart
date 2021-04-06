@@ -2,6 +2,7 @@ class Notif {
   String docId;
   String sender;
   String message;
+  String photoURL;
   List<dynamic> notified;
   String type;
   DateTime timestamp;
@@ -10,6 +11,7 @@ class Notif {
   static const MESSAGE = 'message';
   static const NOTIFIED = 'notified';
   static const TYPE = 'type';
+  static const PHOTOURL = 'photoURL';
   static const TIMESTAMP = 'timestamp';
 
   Notif({
@@ -18,6 +20,7 @@ class Notif {
     this.message,
     this.notified,
     this.type,
+    this.photoURL,
     this.timestamp,
   }) {
     this.notified ??= [];
@@ -30,6 +33,7 @@ class Notif {
     this.notified = [];
     this.notified.addAll(n.notified);
     this.type = n.type;
+    this.photoURL = n.photoURL;
     this.timestamp = n.timestamp;
   }
 
@@ -40,6 +44,7 @@ class Notif {
     this.notified.clear();
     this.notified.addAll(n.notified);
     this.type = n.type;
+    this.photoURL = n.photoURL;
     this.timestamp = n.timestamp;
   }
 
@@ -49,6 +54,7 @@ class Notif {
       MESSAGE: this.message,
       NOTIFIED: this.notified,
       TYPE: this.type,
+      PHOTOURL: this.photoURL,
       TIMESTAMP: this.timestamp,
     };
   }
@@ -60,6 +66,7 @@ class Notif {
       message: doc[MESSAGE],
       notified: doc[NOTIFIED],
       type: doc[TYPE],
+      photoURL: doc[PHOTOURL],
       timestamp: doc[TIMESTAMP] == null
           ? null
           : DateTime.fromMillisecondsSinceEpoch(doc[TIMESTAMP].millisecondsSinceEpoch),

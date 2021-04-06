@@ -183,6 +183,8 @@ class _Controller {
       tempNotif.message = '${state.user.email} shared a photo with you';
       tempNotif.notified = tempMemo.sharedWith;
       tempNotif.type = 'sharedWith';
+      tempNotif.photoURL = tempMemo.photoURL;
+      tempNotif.timestamp = DateTime.now();
       String notifdocId = await FirebaseController.addNotification(tempNotif);
       tempNotif.docId = notifdocId;
       MyDialog.circularProgressStop(state.context);

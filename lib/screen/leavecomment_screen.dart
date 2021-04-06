@@ -75,11 +75,19 @@ class _Controller extends _LeaveCommentState {
       tempComment.docId = docId;
       state.comments.add(tempComment);
       tempNotif.sender = state.user.email;
-      tempNotif.message = state.photoMemo.createdBy == tempComment.postedBy
-          ? '${tempNotif.sender} left a comment on a photo shared with you'
-          : '${tempNotif.sender} left a comment on your photo';
-      tempNotif.notified = state.photoMemo.sharedWith;
+      tempNotif.message = state.reply == null
+          ? '${tempNotif.sender} left a comment on a photo!'
+          : '${tempNotif.sender} replied to your comment!';
+      if (state.reply == null) {
+        tempNotif.notified = state.photoMemo.sharedWith;
+        tempNotif.notified.remove((item) => item == tempNotif.sender);
+        tempNotif.notified.add(state.photoMemo.createdBy);
+      } else {
+        tempNotif.notified.add(state.reply);
+      }
+      tempNotif.photoURL = state.photoMemo.photoURL;
       tempNotif.type = 'comment';
+      tempNotif.timestamp = DateTime.now();
       String notifdocId = await FirebaseController.addNotification(tempNotif);
       tempNotif.docId = notifdocId;
       Navigator.pop(state.context);

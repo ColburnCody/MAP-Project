@@ -207,12 +207,14 @@ class _Controller {
   }
 
   void gotoNotifications() async {
-    List<Notif> notifications =
-        await FirebaseController.getNotifications(email: state.user.email);
+    List<PhotoMemo> sharedList =
+        await FirebaseController.getPhotoMemoSharedWithMe(email: state.user.email);
     await Navigator.pushNamed(state.context, NotificationsScreen.routeName, arguments: {
       Constant.ARG_USER: state.user,
-      Constant.ARG_NOTIFICATIONS: notifications,
+      Constant.ARG_NOTIFICATIONS: state.notifications,
+      Constant.ARG_PHOTOMEMOLIST: sharedList,
     });
+    state.render(() {});
   }
 
   void sharedWithMe() async {
