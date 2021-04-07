@@ -74,7 +74,7 @@ class _Controller {
           Text('${state.comments[index].timestamp}'),
         ],
       ),
-      onTap: () => reply(state.user.email),
+      onTap: () => reply(state.comments[index].postedBy),
     ));
   }
 

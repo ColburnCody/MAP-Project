@@ -181,6 +181,13 @@ class FirebaseController {
     await FirebaseStorage.instance.ref().child(p.photoFilename).delete();
   }
 
+  static Future<void> deleteNotification(Notif n) async {
+    await FirebaseFirestore.instance
+        .collection(Constant.NOTIFICATIONS_COLLECTION)
+        .doc(n.docId)
+        .delete();
+  }
+
   static Future<List<PhotoMemo>> searchImage({
     @required String createdBy,
     @required List<String> searchLabels,

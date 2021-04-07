@@ -179,14 +179,16 @@ class _Controller {
       String docId = await FirebaseController.addPhotoMemo(tempMemo);
       tempMemo.docId = docId;
       state.photoMemoList.insert(0, tempMemo);
-      tempNotif.sender = state.user.email;
-      tempNotif.message = '${state.user.email} shared a photo with you';
-      tempNotif.notified = tempMemo.sharedWith;
-      tempNotif.type = 'sharedWith';
-      tempNotif.photoURL = tempMemo.photoURL;
-      tempNotif.timestamp = DateTime.now();
-      String notifdocId = await FirebaseController.addNotification(tempNotif);
-      tempNotif.docId = notifdocId;
+      for (var i = 0; i < tempMemo.sharedWith.length; i++) {
+        tempNotif.sender = state.user.email;
+        tempNotif.message = '${tempNotif.sender} shared a photo with you!';
+        tempNotif.notified = tempMemo.sharedWith[i];
+        tempNotif.photoURL = tempMemo.photoURL;
+        tempNotif.type = 'sharedWith';
+        tempNotif.timestamp = DateTime.now();
+        String notifdocId = await FirebaseController.addNotification(tempNotif);
+        tempNotif.docId = notifdocId;
+      }
       MyDialog.circularProgressStop(state.context);
       Navigator.pop(state.context); // return to User Home Screen
     } catch (e) {

@@ -3,7 +3,7 @@ class Notif {
   String sender;
   String message;
   String photoURL;
-  List<dynamic> notified;
+  String notified;
   String type;
   DateTime timestamp;
 
@@ -22,16 +22,13 @@ class Notif {
     this.type,
     this.photoURL,
     this.timestamp,
-  }) {
-    this.notified ??= [];
-  }
+  });
 
   Notif.clone(Notif n) {
     this.docId = n.docId;
     this.sender = n.sender;
     this.message = n.message;
-    this.notified = [];
-    this.notified.addAll(n.notified);
+    this.notified = n.notified;
     this.type = n.type;
     this.photoURL = n.photoURL;
     this.timestamp = n.timestamp;
@@ -41,8 +38,7 @@ class Notif {
     this.docId = n.docId;
     this.sender = n.sender;
     this.message = n.message;
-    this.notified.clear();
-    this.notified.addAll(n.notified);
+    this.notified = n.notified;
     this.type = n.type;
     this.photoURL = n.photoURL;
     this.timestamp = n.timestamp;
