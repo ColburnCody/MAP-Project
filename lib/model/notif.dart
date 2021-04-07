@@ -4,13 +4,11 @@ class Notif {
   String message;
   String photoURL;
   String notified;
-  String type;
   DateTime timestamp;
 
   static const SENDER = 'sender';
   static const MESSAGE = 'message';
   static const NOTIFIED = 'notified';
-  static const TYPE = 'type';
   static const PHOTOURL = 'photoURL';
   static const TIMESTAMP = 'timestamp';
 
@@ -19,7 +17,6 @@ class Notif {
     this.sender,
     this.message,
     this.notified,
-    this.type,
     this.photoURL,
     this.timestamp,
   });
@@ -29,7 +26,6 @@ class Notif {
     this.sender = n.sender;
     this.message = n.message;
     this.notified = n.notified;
-    this.type = n.type;
     this.photoURL = n.photoURL;
     this.timestamp = n.timestamp;
   }
@@ -39,7 +35,6 @@ class Notif {
     this.sender = n.sender;
     this.message = n.message;
     this.notified = n.notified;
-    this.type = n.type;
     this.photoURL = n.photoURL;
     this.timestamp = n.timestamp;
   }
@@ -49,7 +44,6 @@ class Notif {
       SENDER: this.sender,
       MESSAGE: this.message,
       NOTIFIED: this.notified,
-      TYPE: this.type,
       PHOTOURL: this.photoURL,
       TIMESTAMP: this.timestamp,
     };
@@ -61,7 +55,6 @@ class Notif {
       sender: doc[SENDER],
       message: doc[MESSAGE],
       notified: doc[NOTIFIED],
-      type: doc[TYPE],
       photoURL: doc[PHOTOURL],
       timestamp: doc[TIMESTAMP] == null
           ? null

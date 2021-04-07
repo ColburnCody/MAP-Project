@@ -47,9 +47,7 @@ class _LeaveCommentState extends State<LeaveCommentScreen> {
             child: TextField(
               autocorrect: true,
               autofocus: true,
-              onSubmitted: (val) {
-                con.addComment(val);
-              },
+              onSubmitted: con.addComment,
             ),
           ),
         ],
@@ -79,13 +77,14 @@ class _Controller extends _LeaveCommentState {
         tempNotif.message = state.reply == state.photoMemo.sharedWith[i]
             ? '${tempNotif.sender} replied to your comment!'
             : '${tempNotif.sender} left a comment on a photo!';
-        if (state.reply == null) {
+        if (state.photoMemo.sharedWith[i] != tempNotif.sender) {
           tempNotif.notified = state.photoMemo.sharedWith[i];
-        } else {
+        } else if (state.reply != null) {
           tempNotif.notified = state.reply;
+        } else {
+          tempNotif.notified = state.photoMemo.createdBy;
         }
         tempNotif.photoURL = state.photoMemo.photoURL;
-        tempNotif.type = 'comment';
         tempNotif.timestamp = DateTime.now();
         String notifdocId = await FirebaseController.addNotification(tempNotif);
         tempNotif.docId = notifdocId;

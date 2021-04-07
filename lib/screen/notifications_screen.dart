@@ -62,32 +62,19 @@ class _Controller extends _NotificationsState {
       child: ListTile(
         title: Text('${state.notifications[index].message}'),
         subtitle: Text('${state.notifications[index].timestamp}'),
-        onTap: () => goToScreen(
-            state.notifications[index].type, state.notifications[index].photoURL),
+        onTap: () =>
+            goToScreen(state.notifications[index].photoURL, state.notifications[index]),
       ),
     );
   }
 
-  void goToScreen(String type, String url) async {
-    var tempMemo;
-    for (var i = 0; i < state.photoMemo.length; i++) {
-      if (state.photoMemo[i].photoURL == url) {
-        tempMemo = state.photoMemo[i];
-      }
-    }
-    List<Comment> commentList = await FirebaseController.getCommentList(photoURL: url);
-    if (type == 'comment') {
-      await Navigator.pushNamed(state.context, CommentScreen.routeName, arguments: {
-        Constant.ARG_USER: state.user,
-        Constant.ARG_ONE_PHOTOMEMO: tempMemo,
-        Constant.ARG_COMMENTlIST: commentList,
-      });
-    } else if (type == 'sharedWith') {
-      await Navigator.pushNamed(state.context, SharedWithScreen.routeName, arguments: {
-        Constant.ARG_USER: state.user,
-        Constant.ARG_PHOTOMEMOLIST: state.photoMemo,
-      });
-    }
+  void goToScreen(String url, Notif n) async {
+    await Navigator.pushNamed(state.context, SharedWithScreen.routeName, arguments: {
+      Constant.ARG_USER: state.user,
+      Constant.ARG_PHOTOMEMOLIST: state.photoMemo,
+    });
+    state.notifications.remove(n);
+    await FirebaseController.deleteNotification(n);
     state.render(() {});
   }
 }
