@@ -16,6 +16,7 @@ class Constant {
   static const NOTIFICATIONS_COLLECTION = 'notifications';
 
   static const ARG_PHOTOMEMOLIST = 'photomemo_list';
+  static const ARG_SHAREDMEMOLIST = 'sharedWith_list';
   static const ARG_COMMENTlIST = 'comment_list';
   static const ARG_NOTIFICATIONS = 'notifications';
 

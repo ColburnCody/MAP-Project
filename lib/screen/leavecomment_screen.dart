@@ -22,13 +22,14 @@ class _LeaveCommentState extends State<LeaveCommentScreen> {
   PhotoMemo photoMemo;
   String reply;
   List<Comment> comments = [];
-  void render(fn) => setState(fn);
 
   @override
   void initState() {
     super.initState();
     con = _Controller(this);
   }
+
+  void render(fn) => setState(fn);
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +73,14 @@ class _Controller extends _LeaveCommentState {
       String docId = await FirebaseController.addComment(tempComment);
       tempComment.docId = docId;
       state.comments.add(tempComment);
+      tempNotif.sender = state.user.email;
+      tempNotif.message = '${tempNotif.sender} left a comment on your photo';
+      tempNotif.notified = state.photoMemo.createdBy;
+      tempNotif.photoURL = state.photoMemo.photoURL;
+      tempNotif.type = 'comment';
+      tempNotif.timestamp = DateTime.now();
+      String notifdocId = await FirebaseController.addNotification(tempNotif);
+      tempNotif.docId = notifdocId;
       for (var i = 0; i < state.photoMemo.sharedWith.length; i++) {
         tempNotif.sender = state.user.email;
         tempNotif.message = state.reply == state.photoMemo.sharedWith[i]
@@ -81,12 +90,11 @@ class _Controller extends _LeaveCommentState {
           tempNotif.notified = state.photoMemo.sharedWith[i];
         } else if (state.reply != null) {
           tempNotif.notified = state.reply;
-        } else {
-          tempNotif.notified = state.photoMemo.createdBy;
         }
+        tempNotif.type = 'comment';
         tempNotif.photoURL = state.photoMemo.photoURL;
         tempNotif.timestamp = DateTime.now();
-        String notifdocId = await FirebaseController.addNotification(tempNotif);
+        notifdocId = await FirebaseController.addNotification(tempNotif);
         tempNotif.docId = notifdocId;
       }
       Navigator.pop(state.context);

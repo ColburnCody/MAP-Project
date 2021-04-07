@@ -185,6 +185,7 @@ class _Controller {
         tempNotif.notified = tempMemo.sharedWith[i];
         tempNotif.photoURL = tempMemo.photoURL;
         tempNotif.timestamp = DateTime.now();
+        tempNotif.type = 'sharedWith';
         String notifdocId = await FirebaseController.addNotification(tempNotif);
         tempNotif.docId = notifdocId;
       }

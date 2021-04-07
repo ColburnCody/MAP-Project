@@ -20,7 +20,8 @@ class NotificationsScreen extends StatefulWidget {
 class _NotificationsState extends State<NotificationsScreen> {
   User user;
   List<Notif> notifications;
-  List<PhotoMemo> photoMemo;
+  List<PhotoMemo> sharedWith;
+  List<PhotoMemo> photoMemos;
   _Controller con;
 
   @override
@@ -36,7 +37,8 @@ class _NotificationsState extends State<NotificationsScreen> {
     Map args = ModalRoute.of(context).settings.arguments;
     user ??= args[Constant.ARG_USER];
     notifications ??= args[Constant.ARG_NOTIFICATIONS];
-    photoMemo ??= args[Constant.ARG_PHOTOMEMOLIST];
+    photoMemos ??= args[Constant.ARG_PHOTOMEMOLIST];
+    sharedWith ??= args[Constant.ARG_SHAREDMEMOLIST];
     return Scaffold(
       appBar: AppBar(
         title: Text('Notifications'),
@@ -69,10 +71,32 @@ class _Controller extends _NotificationsState {
   }
 
   void goToScreen(String url, Notif n) async {
-    await Navigator.pushNamed(state.context, SharedWithScreen.routeName, arguments: {
-      Constant.ARG_USER: state.user,
-      Constant.ARG_PHOTOMEMOLIST: state.photoMemo,
-    });
+    var sharedMemo;
+    for (var i = 0; i < state.sharedWith.length; i++) {
+      if (state.sharedWith[i].photoURL == url) {
+        sharedMemo = state.sharedWith[i];
+      }
+    }
+    var tempMemo;
+    for (var i = 0; i < state.photoMemos.length; i++) {
+      if (state.photoMemos[i].photoURL == url) {
+        tempMemo = state.photoMemos[i];
+      }
+    }
+    List<Comment> commentList = await FirebaseController.getCommentList(
+        photoURL: sharedMemo == null ? tempMemo.photoURL : sharedMemo.photoURL);
+    if (n.type == 'sharedWith') {
+      await Navigator.pushNamed(state.context, SharedWithScreen.routeName, arguments: {
+        Constant.ARG_USER: state.user,
+        Constant.ARG_PHOTOMEMOLIST: sharedMemo,
+      });
+    } else if (n.type == 'comment') {
+      await Navigator.pushNamed(state.context, CommentScreen.routeName, arguments: {
+        Constant.ARG_USER: state.user,
+        Constant.ARG_COMMENTlIST: commentList,
+        Constant.ARG_ONE_PHOTOMEMO: sharedMemo == null ? tempMemo : sharedMemo,
+      });
+    }
     state.notifications.remove(n);
     await FirebaseController.deleteNotification(n);
     state.render(() {});
