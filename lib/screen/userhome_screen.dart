@@ -57,7 +57,7 @@ class _UserHomeState extends State<UserHomeScreen> {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 4.0),
                       child: Container(
-                        width: MediaQuery.of(context).size.width * 0.7,
+                        width: MediaQuery.of(context).size.width * 0.6,
                         child: TextFormField(
                           decoration: InputDecoration(
                             hintText: 'Search',

@@ -53,7 +53,19 @@ class _CommentState extends State<CommentScreen> {
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemCount: comments.length,
-              itemBuilder: con.buildList,
+              itemBuilder: (BuildContext context, int index) => Container(
+                child: ListTile(
+                  title: Text('${comments[index].postedBy} says:'),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(comments[index].messageContent),
+                      Text('${comments[index].timestamp}'),
+                    ],
+                  ),
+                  onTap: () => con.reply(comments[index].postedBy),
+                ),
+              ),
             ),
     );
   }
@@ -63,24 +75,7 @@ class _Controller {
   _CommentState state;
   _Controller(this.state);
 
-  Widget buildList(BuildContext context, int index) {
-    return Container(
-        child: ListTile(
-      title: Text('${state.comments[index].postedBy} says: '),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('${state.comments[index].messageContent}'),
-          Text('${state.comments[index].timestamp}'),
-        ],
-      ),
-      onTap: () => reply(state.comments[index].postedBy),
-    ));
-  }
-
   void reply(String email) async {
-    state.comments =
-        await FirebaseController.getCommentList(photoURL: state.photoMemo.photoURL);
     await Navigator.pushNamed(state.context, LeaveCommentScreen.routeName, arguments: {
       Constant.ARG_USER: state.user,
       Constant.ARG_ONE_PHOTOMEMO: state.photoMemo,
@@ -91,8 +86,6 @@ class _Controller {
   }
 
   void addComment() async {
-    state.comments =
-        await FirebaseController.getCommentList(photoURL: state.photoMemo.photoURL);
     await Navigator.pushNamed(state.context, LeaveCommentScreen.routeName, arguments: {
       Constant.ARG_USER: state.user,
       Constant.ARG_ONE_PHOTOMEMO: state.photoMemo,

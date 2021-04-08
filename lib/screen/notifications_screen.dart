@@ -88,7 +88,7 @@ class _Controller extends _NotificationsState {
     if (n.type == 'sharedWith') {
       await Navigator.pushNamed(state.context, SharedWithScreen.routeName, arguments: {
         Constant.ARG_USER: state.user,
-        Constant.ARG_PHOTOMEMOLIST: sharedMemo,
+        Constant.ARG_PHOTOMEMOLIST: state.sharedWith,
       });
     } else if (n.type == 'comment') {
       await Navigator.pushNamed(state.context, CommentScreen.routeName, arguments: {

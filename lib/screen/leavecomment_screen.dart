@@ -5,6 +5,7 @@ import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/notif.dart';
 import 'package:lesson3/model/photomemo.dart';
+import 'package:lesson3/screen/comment_screen.dart';
 import 'package:lesson3/screen/myview/mydialog.dart';
 
 class LeaveCommentScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class _LeaveCommentState extends State<LeaveCommentScreen> {
   User user;
   PhotoMemo photoMemo;
   String reply;
-  List<Comment> comments = [];
+  List<Comment> comments;
 
   @override
   void initState() {
@@ -72,29 +73,32 @@ class _Controller extends _LeaveCommentState {
       tempComment.photoURL = state.photoMemo.photoURL;
       String docId = await FirebaseController.addComment(tempComment);
       tempComment.docId = docId;
-      state.comments.add(tempComment);
-      tempNotif.sender = state.user.email;
-      tempNotif.message = '${tempNotif.sender} left a comment on your photo';
-      tempNotif.notified = state.photoMemo.createdBy;
-      tempNotif.photoURL = state.photoMemo.photoURL;
-      tempNotif.type = 'comment';
-      tempNotif.timestamp = DateTime.now();
-      String notifdocId = await FirebaseController.addNotification(tempNotif);
-      tempNotif.docId = notifdocId;
-      for (var i = 0; i < state.photoMemo.sharedWith.length; i++) {
+      state.comments.insert(0, tempComment);
+      if (state.user.email != state.photoMemo.createdBy) {
         tempNotif.sender = state.user.email;
-        tempNotif.message = state.reply == state.photoMemo.sharedWith[i]
-            ? '${tempNotif.sender} replied to your comment!'
-            : '${tempNotif.sender} left a comment on a photo!';
-        if (state.photoMemo.sharedWith[i] != tempNotif.sender) {
-          tempNotif.notified = state.photoMemo.sharedWith[i];
-        } else if (state.reply != null) {
-          tempNotif.notified = state.reply;
-        }
-        tempNotif.type = 'comment';
+        tempNotif.message = '${tempNotif.sender} left a comment on your photo';
+        tempNotif.notified = state.photoMemo.createdBy;
         tempNotif.photoURL = state.photoMemo.photoURL;
+        tempNotif.type = 'comment';
         tempNotif.timestamp = DateTime.now();
-        notifdocId = await FirebaseController.addNotification(tempNotif);
+        String notifdocId = await FirebaseController.addNotification(tempNotif);
+        tempNotif.docId = notifdocId;
+      }
+      if (state.reply != null) {
+        tempNotif.message = '${tempNotif.sender} replied to your comment!';
+        tempNotif.notified = state.reply;
+        String notifdocId = await FirebaseController.addNotification(tempNotif);
+        tempNotif.docId = notifdocId;
+      }
+      for (var i = 0; i < state.photoMemo.sharedWith.length; i++) {
+        tempNotif.message =
+            '${tempNotif.sender} left a comment on a photo shared with you!';
+        if (state.photoMemo.sharedWith[i] != state.user.email ||
+            state.reply != state.user.email) {
+          tempNotif.notified = state.photoMemo.sharedWith[i];
+        }
+        tempNotif.timestamp = DateTime.now();
+        String notifdocId = await FirebaseController.addNotification(tempNotif);
         tempNotif.docId = notifdocId;
       }
       Navigator.pop(state.context);
