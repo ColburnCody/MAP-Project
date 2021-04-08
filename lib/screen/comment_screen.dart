@@ -22,8 +22,8 @@ class _CommentState extends State<CommentScreen> {
 
   @override
   void initState() {
-    con = _Controller(this);
     super.initState();
+    con = _Controller(this);
   }
 
   void render(fn) => setState(fn);
