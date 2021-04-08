@@ -44,7 +44,10 @@ class _NotificationsState extends State<NotificationsScreen> {
         title: Text('Notifications'),
       ),
       body: notifications.length == 0
-          ? Text('No new notifications')
+          ? Text(
+              'No new notifications',
+              style: Theme.of(context).textTheme.headline5,
+            )
           : ListView.builder(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
