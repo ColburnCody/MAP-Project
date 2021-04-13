@@ -66,7 +66,9 @@ class _CommentState extends State<CommentScreen> {
                         children: [
                           IconButton(icon: Icon(Icons.thumb_up), onPressed: null),
                           GestureDetector(
-                            child: Text('${comments[index].likes}'),
+                            child: Text(comments[index].likedBy.length == 0
+                                ? '0'
+                                : '${comments[index].likedBy.length}'),
                             onTap: null,
                           ),
                           IconButton(
@@ -74,7 +76,9 @@ class _CommentState extends State<CommentScreen> {
                             onPressed: null,
                           ),
                           GestureDetector(
-                            child: Text('${comments[index].dislikes}'),
+                            child: Text(comments[index].dislikedBy.length == 0
+                                ? '0'
+                                : '${comments[index].dislikedBy.length}'),
                             onTap: null,
                           ),
                         ],

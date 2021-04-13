@@ -128,7 +128,9 @@ class _DetailedViewState extends State<DetailedViewScreen> {
                 children: [
                   IconButton(icon: Icon(Icons.thumb_up), onPressed: null),
                   GestureDetector(
-                    child: Text('${onePhotoMemoTemp.likes}'),
+                    child: Text(onePhotoMemoTemp.likedBy == null
+                        ? '0'
+                        : '${onePhotoMemoTemp.likedBy.length}'),
                     onTap: null,
                   ),
                   IconButton(
@@ -136,7 +138,9 @@ class _DetailedViewState extends State<DetailedViewScreen> {
                     onPressed: null,
                   ),
                   GestureDetector(
-                    child: Text('${onePhotoMemoTemp.dislikes}'),
+                    child: Text(onePhotoMemoTemp.dislikedBy == null
+                        ? '0'
+                        : '${onePhotoMemoTemp.dislikedBy.length}'),
                     onTap: null,
                   ),
                 ],

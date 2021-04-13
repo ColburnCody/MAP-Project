@@ -176,8 +176,6 @@ class _Controller {
       tempMemo.timestamp = DateTime.now();
       tempMemo.createdBy = state.user.email;
       tempMemo.imageLabels = imageLabels;
-      tempMemo.likes = 0;
-      tempMemo.dislikes = 0;
       String docId = await FirebaseController.addPhotoMemo(tempMemo);
       tempMemo.docId = docId;
       state.photoMemoList.insert(0, tempMemo);

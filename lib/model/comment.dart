@@ -4,8 +4,6 @@ class Comment {
   String messageContent;
   String photoURL;
   DateTime timestamp;
-  int likes;
-  int dislikes;
   List<dynamic> likedBy;
   List<dynamic> dislikedBy;
 
@@ -13,8 +11,6 @@ class Comment {
   static const MESSAGECONTENT = 'messageContent';
   static const PHOTOURL = 'photoURL';
   static const TIMESTAMP = 'timestamp';
-  static const LIKES = 'likes';
-  static const DISLIKES = 'dislikes';
   static const LIKED_BY = 'likedBy';
   static const DISLIKED_BY = 'dislikedBy';
 
@@ -24,8 +20,6 @@ class Comment {
     this.messageContent,
     this.photoURL,
     this.timestamp,
-    this.likes,
-    this.dislikes,
     this.likedBy,
     this.dislikedBy,
   }) {
@@ -39,8 +33,6 @@ class Comment {
     this.messageContent = c.messageContent;
     this.photoURL = c.photoURL;
     this.timestamp = c.timestamp;
-    this.likes = c.likes;
-    this.dislikes = c.dislikes;
     this.likedBy = [];
     this.likedBy.addAll(c.likedBy);
     this.dislikedBy = [];
@@ -53,8 +45,6 @@ class Comment {
     this.messageContent = c.messageContent;
     this.photoURL = c.photoURL;
     this.timestamp = c.timestamp;
-    this.likes = c.likes;
-    this.dislikes = c.dislikes;
     this.likedBy.clear();
     this.likedBy.addAll(c.likedBy);
     this.dislikedBy.clear();
@@ -67,8 +57,6 @@ class Comment {
       MESSAGECONTENT: this.messageContent,
       PHOTOURL: this.photoURL,
       TIMESTAMP: this.timestamp,
-      LIKES: likes,
-      DISLIKES: dislikes,
       LIKED_BY: likedBy,
       DISLIKED_BY: dislikedBy,
     };
@@ -80,8 +68,6 @@ class Comment {
       postedBy: doc[POSTEDBY],
       messageContent: doc[MESSAGECONTENT],
       photoURL: doc[PHOTOURL],
-      likes: doc[LIKES],
-      dislikes: doc[DISLIKES],
       likedBy: doc[LIKED_BY],
       dislikedBy: doc[DISLIKED_BY],
       timestamp: doc[TIMESTAMP] == null

@@ -5,6 +5,7 @@ import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
 import 'package:lesson3/screen/comment_screen.dart';
+import 'package:lesson3/screen/myview/mydialog.dart';
 import 'package:lesson3/screen/myview/myimage.dart';
 
 class SharedWithScreen extends StatefulWidget {
@@ -57,18 +58,25 @@ class _SharedWithState extends State<SharedWithScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        IconButton(icon: Icon(Icons.thumb_up), onPressed: null),
+                        IconButton(
+                          icon: Icon(Icons.thumb_up),
+                          onPressed: () => con.likePhoto(photoMemoList[index]),
+                        ),
                         GestureDetector(
-                          child: Text('${photoMemoList[index].likes}'),
-                          onTap: null,
+                          child: Text(photoMemoList[index].likedBy.length == 0
+                              ? '0'
+                              : '${photoMemoList[index].likedBy.length}'),
+                          onTap: () => con.showLiked(photoMemoList[index]),
                         ),
                         IconButton(
                           icon: Icon(Icons.thumb_down),
-                          onPressed: null,
+                          onPressed: () => con.dislikePhoto(photoMemoList[index]),
                         ),
                         GestureDetector(
-                          child: Text('${photoMemoList[index].dislikes}'),
-                          onTap: null,
+                          child: Text(photoMemoList[index].dislikedBy.length == 0
+                              ? '0'
+                              : '${photoMemoList[index].dislikedBy.length}'),
+                          onTap: () => con.showDisliked(photoMemoList[index]),
                         ),
                       ],
                     ),
@@ -103,6 +111,56 @@ class _SharedWithState extends State<SharedWithScreen> {
 class _Controller {
   _SharedWithState state;
   _Controller(this.state);
+
+  void showLiked(PhotoMemo p) {
+    if (p.likedBy.length == 0) {
+      MyDialog.info(
+          context: state.context,
+          title: 'Liked by',
+          content: 'No one has liked this photo yet, be the first!');
+    } else {
+      MyDialog.info(
+          context: state.context, title: 'Liked by', content: p.likedBy.toString());
+    }
+  }
+
+  void showDisliked(PhotoMemo p) {
+    if (p.dislikedBy.length == 0) {
+      MyDialog.info(
+          context: state.context,
+          title: 'Disliked by',
+          content: 'This photo is awesome, no one has disliked it!');
+    } else {
+      MyDialog.info(
+          context: state.context, title: 'Disliked by', content: p.dislikedBy.toString());
+    }
+  }
+
+  void dislikePhoto(PhotoMemo p) async {
+    if (p.dislikedBy.length == 0) {
+      p.dislikedBy.add(state.user.email);
+      p.likedBy.remove(state.user.email);
+    } else {
+      p.dislikedBy.remove(state.user.email);
+    }
+    Map<String, dynamic> updateInfo = {};
+    updateInfo[PhotoMemo.DISLIKED_BY] = p.dislikedBy;
+    await FirebaseController.updatePhotoMemo(p.docId, updateInfo);
+    state.render(() {});
+  }
+
+  void likePhoto(PhotoMemo p) async {
+    if (p.likedBy.length == 0) {
+      p.likedBy.add(state.user.email);
+      p.dislikedBy.remove(state.user.email);
+    } else {
+      p.likedBy.remove(state.user.email);
+    }
+    Map<String, dynamic> updateInfo = {};
+    updateInfo[PhotoMemo.LIKED_BY] = p.likedBy;
+    await FirebaseController.updatePhotoMemo(p.docId, updateInfo);
+    state.render(() {});
+  }
 
   void goToComments(int index) async {
     List<Comment> comments = await FirebaseController.getCommentSharedWithMe(

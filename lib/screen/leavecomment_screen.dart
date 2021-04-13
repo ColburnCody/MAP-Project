@@ -71,8 +71,6 @@ class _Controller extends _LeaveCommentState {
           state.reply == null ? comment : '@${state.reply}, ' + comment;
       tempComment.timestamp = DateTime.now();
       tempComment.photoURL = state.photoMemo.photoURL;
-      tempComment.likes = 0;
-      tempComment.dislikes = 0;
       String docId = await FirebaseController.addComment(tempComment);
       tempComment.docId = docId;
       state.comments.add(tempComment);
@@ -101,7 +99,7 @@ class _Controller extends _LeaveCommentState {
         tempNotif.message =
             '${tempNotif.sender} left a comment on a photo shared with you!';
         if (state.photoMemo.sharedWith[i] != state.user.email ||
-            state.reply != state.user.email) {
+            state.reply != state.photoMemo.sharedWith[i]) {
           tempNotif.notified = state.photoMemo.sharedWith[i];
         }
         tempNotif.photoURL = state.photoMemo.photoURL;
