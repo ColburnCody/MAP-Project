@@ -54,6 +54,24 @@ class _SharedWithState extends State<SharedWithScreen> {
                         context: context,
                       ),
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(icon: Icon(Icons.thumb_up), onPressed: null),
+                        GestureDetector(
+                          child: Text('${photoMemoList[index].likes}'),
+                          onTap: null,
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.thumb_down),
+                          onPressed: null,
+                        ),
+                        GestureDetector(
+                          child: Text('${photoMemoList[index].dislikes}'),
+                          onTap: null,
+                        ),
+                      ],
+                    ),
                     IconButton(
                       icon: Icon(Icons.comment),
                       onPressed: () => con.goToComments(index),

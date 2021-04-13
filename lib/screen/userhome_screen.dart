@@ -45,7 +45,6 @@ class _UserHomeState extends State<UserHomeScreen> {
       onWillPop: () => Future.value(false), // disable Android system back button
       child: Scaffold(
         appBar: AppBar(
-          // title: Text('User Home'),
           actions: [
             con.delIndex != null
                 ? IconButton(

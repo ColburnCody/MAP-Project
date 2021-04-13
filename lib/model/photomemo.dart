@@ -8,6 +8,10 @@ class PhotoMemo {
   DateTime timestamp;
   List<dynamic> sharedWith; // list of emails
   List<dynamic> imageLabels; // image identity by ML
+  int likes;
+  int dislikes;
+  List<dynamic> likedBy;
+  List<dynamic> dislikedBy;
 
   // key for Firestore document
   static const TITLE = 'title';
@@ -18,6 +22,10 @@ class PhotoMemo {
   static const TIMESTAMP = 'timestamp';
   static const SHARED_WITH = 'sharedWith';
   static const IMAGE_LABELS = 'imageLabels';
+  static const LIKES = 'likes';
+  static const DISLIKES = 'dislikes';
+  static const LIKED_BY = 'likedBy';
+  static const DISLIKED_BY = 'dislikedBy';
 
   PhotoMemo({
     this.docId,
@@ -29,10 +37,15 @@ class PhotoMemo {
     this.title,
     this.sharedWith,
     this.imageLabels,
-    comments,
+    this.likes,
+    this.likedBy,
+    this.dislikes,
+    this.dislikedBy,
   }) {
     this.sharedWith ??= [];
     this.imageLabels ??= [];
+    this.likedBy ??= [];
+    this.dislikedBy ??= [];
   }
 
   PhotoMemo.clone(PhotoMemo p) {
@@ -47,6 +60,12 @@ class PhotoMemo {
     this.sharedWith.addAll(p.sharedWith); // deep copy
     this.imageLabels = [];
     this.imageLabels.addAll(p.imageLabels); // deep copy
+    this.likes = p.likes;
+    this.dislikes = p.dislikes;
+    this.likedBy = [];
+    this.likedBy.addAll(p.likedBy);
+    this.dislikedBy = [];
+    this.dislikedBy.addAll(p.dislikedBy);
   }
 
   // a = b ==> a.assign(b)
@@ -62,6 +81,12 @@ class PhotoMemo {
     this.sharedWith.addAll(p.sharedWith);
     this.imageLabels.clear();
     this.imageLabels.addAll(p.imageLabels);
+    this.likes = p.likes;
+    this.likedBy.clear();
+    this.likedBy.addAll(p.likedBy);
+    this.dislikes = p.dislikes;
+    this.dislikedBy.clear();
+    this.dislikedBy.addAll(p.dislikedBy);
   }
 
   // from Dart object to Firestore document
@@ -75,6 +100,10 @@ class PhotoMemo {
       TIMESTAMP: this.timestamp,
       SHARED_WITH: this.sharedWith,
       IMAGE_LABELS: this.imageLabels,
+      LIKES: this.likes,
+      LIKED_BY: this.likedBy,
+      DISLIKES: this.dislikes,
+      DISLIKED_BY: this.dislikedBy,
     };
   }
 
@@ -88,6 +117,10 @@ class PhotoMemo {
       photoURL: doc[PHOTO_URL],
       sharedWith: doc[SHARED_WITH],
       imageLabels: doc[IMAGE_LABELS],
+      likes: doc[LIKES],
+      likedBy: doc[LIKED_BY],
+      dislikes: doc[DISLIKES],
+      dislikedBy: doc[DISLIKED_BY],
       timestamp: doc[TIMESTAMP] == null
           ? null
           : DateTime.fromMillisecondsSinceEpoch(doc[TIMESTAMP].millisecondsSinceEpoch),

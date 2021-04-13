@@ -71,6 +71,8 @@ class _Controller extends _LeaveCommentState {
           state.reply == null ? comment : '@${state.reply}, ' + comment;
       tempComment.timestamp = DateTime.now();
       tempComment.photoURL = state.photoMemo.photoURL;
+      tempComment.likes = 0;
+      tempComment.dislikes = 0;
       String docId = await FirebaseController.addComment(tempComment);
       tempComment.docId = docId;
       state.comments.add(tempComment);

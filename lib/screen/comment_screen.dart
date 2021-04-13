@@ -61,6 +61,24 @@ class _CommentState extends State<CommentScreen> {
                     children: [
                       Text(comments[index].messageContent),
                       Text('${comments[index].timestamp}'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(icon: Icon(Icons.thumb_up), onPressed: null),
+                          GestureDetector(
+                            child: Text('${comments[index].likes}'),
+                            onTap: null,
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.thumb_down),
+                            onPressed: null,
+                          ),
+                          GestureDetector(
+                            child: Text('${comments[index].dislikes}'),
+                            onTap: null,
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   onTap: () => con.reply(comments[index].postedBy),

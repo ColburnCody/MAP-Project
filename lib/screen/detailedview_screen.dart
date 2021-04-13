@@ -123,6 +123,24 @@ class _DetailedViewState extends State<DetailedViewScreen> {
                       progressMessage,
                       style: Theme.of(context).textTheme.headline6,
                     ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(icon: Icon(Icons.thumb_up), onPressed: null),
+                  GestureDetector(
+                    child: Text('${onePhotoMemoTemp.likes}'),
+                    onTap: null,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.thumb_down),
+                    onPressed: null,
+                  ),
+                  GestureDetector(
+                    child: Text('${onePhotoMemoTemp.dislikes}'),
+                    onTap: null,
+                  ),
+                ],
+              ),
               TextFormField(
                 enabled: editMode,
                 style: Theme.of(context).textTheme.headline6,
