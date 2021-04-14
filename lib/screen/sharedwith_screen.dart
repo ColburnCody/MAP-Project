@@ -139,18 +139,11 @@ class _Controller {
   }
 
   void dislikePhoto(PhotoMemo p) async {
-    if (p.dislikedBy.length == 0) {
+    if (p.dislikedBy.length != 0) {
+      p.dislikedBy.remove(state.user.email);
+    } else {
       p.dislikedBy.add(state.user.email);
       p.likedBy.remove(state.user.email);
-      tempNotif.sender = state.user.email;
-      tempNotif.message = '${tempNotif.sender} liked your photo!';
-      tempNotif.photoURL = p.photoURL;
-      tempNotif.notified = p.createdBy;
-      tempNotif.type = 'vote';
-      String notifdocid = await FirebaseController.addNotification(tempNotif);
-      tempNotif.docId = notifdocid;
-    } else {
-      p.dislikedBy.remove(state.user.email);
     }
     Map<String, dynamic> updateInfo = {};
     updateInfo[PhotoMemo.DISLIKED_BY] = p.dislikedBy;
@@ -159,6 +152,7 @@ class _Controller {
     tempNotif.message = '${tempNotif.sender} liked your photo!';
     tempNotif.photoURL = p.photoURL;
     tempNotif.notified = p.createdBy;
+    tempNotif.timestamp = DateTime.now();
     tempNotif.type = 'vote';
     String notifdocid = await FirebaseController.addNotification(tempNotif);
     tempNotif.docId = notifdocid;
@@ -166,22 +160,23 @@ class _Controller {
   }
 
   void likePhoto(PhotoMemo p) async {
-    if (p.likedBy.length == 0) {
+    if (p.likedBy.length != 0) {
+      p.likedBy.remove(state.user.email);
+    } else {
       p.likedBy.add(state.user.email);
       p.dislikedBy.remove(state.user.email);
-      tempNotif.sender = state.user.email;
-      tempNotif.message = '${tempNotif.sender} disliked your photo!';
-      tempNotif.photoURL = p.photoURL;
-      tempNotif.notified = p.createdBy;
-      tempNotif.type = 'vote';
-      String notifdocid = await FirebaseController.addNotification(tempNotif);
-      tempNotif.docId = notifdocid;
-    } else {
-      p.likedBy.remove(state.user.email);
     }
     Map<String, dynamic> updateInfo = {};
     updateInfo[PhotoMemo.LIKED_BY] = p.likedBy;
     await FirebaseController.updatePhotoMemo(p.docId, updateInfo);
+    tempNotif.sender = state.user.email;
+    tempNotif.message = '${tempNotif.sender} disliked your photo!';
+    tempNotif.photoURL = p.photoURL;
+    tempNotif.notified = p.createdBy;
+    tempNotif.timestamp = DateTime.now();
+    tempNotif.type = 'vote';
+    String notifdocid = await FirebaseController.addNotification(tempNotif);
+    tempNotif.docId = notifdocid;
     state.render(() {});
   }
 

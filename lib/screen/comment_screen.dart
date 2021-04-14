@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
+import 'package:lesson3/model/notif.dart';
 import 'package:lesson3/model/photomemo.dart';
 import 'package:lesson3/screen/leavecomment_screen.dart';
+import 'package:lesson3/screen/myview/mydialog.dart';
 
 class CommentScreen extends StatefulWidget {
   static const routeName = '/commentScreen';
@@ -64,22 +66,25 @@ class _CommentState extends State<CommentScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          IconButton(icon: Icon(Icons.thumb_up), onPressed: null),
+                          IconButton(
+                            icon: Icon(Icons.thumb_up),
+                            onPressed: () => con.likeComment(comments[index]),
+                          ),
                           GestureDetector(
                             child: Text(comments[index].likedBy.length == 0
                                 ? '0'
                                 : '${comments[index].likedBy.length}'),
-                            onTap: null,
+                            onTap: () => con.showLiked(comments[index]),
                           ),
                           IconButton(
                             icon: Icon(Icons.thumb_down),
-                            onPressed: null,
+                            onPressed: () => con.dislikeComment(comments[index]),
                           ),
                           GestureDetector(
                             child: Text(comments[index].dislikedBy.length == 0
                                 ? '0'
                                 : '${comments[index].dislikedBy.length}'),
-                            onTap: null,
+                            onTap: () => con.showDisliked(comments[index]),
                           ),
                         ],
                       ),
@@ -96,6 +101,73 @@ class _CommentState extends State<CommentScreen> {
 class _Controller {
   _CommentState state;
   _Controller(this.state);
+  Notif tempNotif = Notif();
+
+  void likeComment(Comment c) async {
+    if (c.likedBy.length != 0) {
+      c.likedBy.remove(state.user.email);
+    } else {
+      c.likedBy.add(state.user.email);
+      c.dislikedBy.remove(state.user.email);
+    }
+    Map<String, dynamic> updateInfo = {};
+    updateInfo[Comment.LIKED_BY] = c.likedBy;
+    await FirebaseController.updateComment(c.docId, updateInfo);
+    tempNotif.sender = state.user.email;
+    tempNotif.message = '${tempNotif.sender} liked your comment!';
+    tempNotif.photoURL = state.photoMemo.photoURL;
+    tempNotif.notified = c.postedBy;
+    tempNotif.timestamp = DateTime.now();
+    tempNotif.type = 'voteC';
+    String notifdocid = await FirebaseController.addNotification(tempNotif);
+    tempNotif.docId = notifdocid;
+    state.render(() {});
+  }
+
+  void dislikeComment(Comment c) async {
+    if (c.dislikedBy.length != 0) {
+      c.dislikedBy.remove(state.user.email);
+    } else {
+      c.dislikedBy.add(state.user.email);
+      c.likedBy.remove(state.user.email);
+    }
+    Map<String, dynamic> updateInfo = {};
+    updateInfo[Comment.DISLIKED_BY] = c.dislikedBy;
+    await FirebaseController.updateComment(c.docId, updateInfo);
+    tempNotif.sender = state.user.email;
+    tempNotif.message = '${tempNotif.sender} disliked your comment!';
+    tempNotif.photoURL = state.photoMemo.photoURL;
+    tempNotif.notified = c.postedBy;
+    tempNotif.type = 'voteC';
+    tempNotif.timestamp = DateTime.now();
+    String notifdocid = await FirebaseController.addNotification(tempNotif);
+    tempNotif.docId = notifdocid;
+    state.render(() {});
+  }
+
+  void showLiked(Comment c) {
+    if (c.likedBy.length == 0) {
+      MyDialog.info(
+          context: state.context,
+          title: 'Liked by',
+          content: 'No one has liked this comment yet, be the first!');
+    } else {
+      MyDialog.info(
+          context: state.context, title: 'Liked by', content: c.likedBy.toString());
+    }
+  }
+
+  void showDisliked(Comment c) {
+    if (c.dislikedBy.length == 0) {
+      MyDialog.info(
+          context: state.context,
+          title: 'Disiked by',
+          content: 'This comment is awesome, no one has disliked it!');
+    } else {
+      MyDialog.info(
+          context: state.context, title: 'Disiked by', content: c.dislikedBy.toString());
+    }
+  }
 
   void reply(String email) async {
     await Navigator.pushNamed(state.context, LeaveCommentScreen.routeName, arguments: {

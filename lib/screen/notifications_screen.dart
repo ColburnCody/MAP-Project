@@ -94,7 +94,7 @@ class _Controller extends _NotificationsState {
         Constant.ARG_USER: state.user,
         Constant.ARG_PHOTOMEMOLIST: state.sharedWith,
       });
-    } else if (n.type == 'comment') {
+    } else if (n.type == 'comment' || n.type == 'voteC') {
       await Navigator.pushNamed(state.context, CommentScreen.routeName, arguments: {
         Constant.ARG_USER: state.user,
         Constant.ARG_COMMENTlIST: commentList,
@@ -109,9 +109,9 @@ class _Controller extends _NotificationsState {
           Constant.ARG_ONE_PHOTOMEMO: tempMemo,
         },
       );
+      state.notifications.remove(n);
+      await FirebaseController.deleteNotification(n);
+      state.render(() {});
     }
-    state.notifications.remove(n);
-    await FirebaseController.deleteNotification(n);
-    state.render(() {});
   }
 }
