@@ -7,6 +7,7 @@ import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/notif.dart';
 import 'package:lesson3/model/photomemo.dart';
 import 'package:lesson3/screen/comment_screen.dart';
+import 'package:lesson3/screen/detailedview_screen.dart';
 import 'package:lesson3/screen/sharedwith_screen.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -99,6 +100,15 @@ class _Controller extends _NotificationsState {
         Constant.ARG_COMMENTlIST: commentList,
         Constant.ARG_ONE_PHOTOMEMO: sharedMemo == null ? tempMemo : sharedMemo,
       });
+    } else if (n.type == 'vote') {
+      await Navigator.pushNamed(
+        state.context,
+        DetailedViewScreen.routeName,
+        arguments: {
+          Constant.ARG_USER: state.user,
+          Constant.ARG_ONE_PHOTOMEMO: tempMemo,
+        },
+      );
     }
     state.notifications.remove(n);
     await FirebaseController.deleteNotification(n);

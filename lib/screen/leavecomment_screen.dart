@@ -74,7 +74,8 @@ class _Controller extends _LeaveCommentState {
       String docId = await FirebaseController.addComment(tempComment);
       tempComment.docId = docId;
       state.comments.add(tempComment);
-      if (state.user.email != state.photoMemo.createdBy) {
+      if (state.user.email != state.photoMemo.createdBy &&
+          state.photoMemo.createdBy != state.reply) {
         tempNotif.sender = state.user.email;
         tempNotif.message = '${tempNotif.sender} left a comment on your photo';
         tempNotif.notified = state.photoMemo.createdBy;

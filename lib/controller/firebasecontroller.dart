@@ -134,6 +134,13 @@ class FirebaseController {
     return labels;
   }
 
+  static Future<void> updateComment(String docId, Map<String, dynamic> updateInfo) async {
+    await FirebaseFirestore.instance
+        .collection(Constant.COMMENTS_COLLECTION)
+        .doc(docId)
+        .update(updateInfo);
+  }
+
   static Future<void> updatePhotoMemo(
       String docId, Map<String, dynamic> updateInfo) async {
     await FirebaseFirestore.instance

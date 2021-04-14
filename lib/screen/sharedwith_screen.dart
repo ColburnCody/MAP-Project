@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
+import 'package:lesson3/model/notif.dart';
 import 'package:lesson3/model/photomemo.dart';
 import 'package:lesson3/screen/comment_screen.dart';
 import 'package:lesson3/screen/myview/mydialog.dart';
@@ -111,6 +112,7 @@ class _SharedWithState extends State<SharedWithScreen> {
 class _Controller {
   _SharedWithState state;
   _Controller(this.state);
+  Notif tempNotif = Notif();
 
   void showLiked(PhotoMemo p) {
     if (p.likedBy.length == 0) {
@@ -146,6 +148,13 @@ class _Controller {
     Map<String, dynamic> updateInfo = {};
     updateInfo[PhotoMemo.DISLIKED_BY] = p.dislikedBy;
     await FirebaseController.updatePhotoMemo(p.docId, updateInfo);
+    tempNotif.sender = state.user.email;
+    tempNotif.message = '${tempNotif.sender} liked your photo!';
+    tempNotif.photoURL = p.photoURL;
+    tempNotif.notified = p.createdBy;
+    tempNotif.type = 'vote';
+    String notifdocid = await FirebaseController.addNotification(tempNotif);
+    tempNotif.docId = notifdocid;
     state.render(() {});
   }
 
@@ -159,6 +168,13 @@ class _Controller {
     Map<String, dynamic> updateInfo = {};
     updateInfo[PhotoMemo.LIKED_BY] = p.likedBy;
     await FirebaseController.updatePhotoMemo(p.docId, updateInfo);
+    tempNotif.sender = state.user.email;
+    tempNotif.message = '${tempNotif.sender} disliked your photo!';
+    tempNotif.photoURL = p.photoURL;
+    tempNotif.notified = p.createdBy;
+    tempNotif.type = 'vote';
+    String notifdocid = await FirebaseController.addNotification(tempNotif);
+    tempNotif.docId = notifdocid;
     state.render(() {});
   }
 
