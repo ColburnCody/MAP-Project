@@ -11,6 +11,7 @@ import 'package:lesson3/screen/signin_screen.dart';
 import 'package:lesson3/screen/signup_screen.dart';
 import 'package:lesson3/screen/userhome_screen.dart';
 import 'package:lesson3/model/constant.dart';
+import 'package:lesson3/screen/usersettings_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +39,7 @@ class PhotoMemoApp extends StatelessWidget {
         CommentScreen.routeName: (context) => CommentScreen(),
         LeaveCommentScreen.routeName: (context) => LeaveCommentScreen(),
         NotificationsScreen.routeName: (context) => NotificationsScreen(),
+        UserSettingsScreen.routeName: (context) => UserSettingsScreen(),
       },
     );
   }

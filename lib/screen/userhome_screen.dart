@@ -5,12 +5,14 @@ import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/notif.dart';
 import 'package:lesson3/model/photomemo.dart';
+import 'package:lesson3/model/profilepictures.dart';
 import 'package:lesson3/screen/addphotomeme_screen.dart';
 import 'package:lesson3/screen/detailedview_screen.dart';
 import 'package:lesson3/screen/myview/mydialog.dart';
 import 'package:lesson3/screen/myview/myimage.dart';
 import 'package:lesson3/screen/notifications_screen.dart';
 import 'package:lesson3/screen/sharedwith_screen.dart';
+import 'package:lesson3/screen/usersettings_screen.dart';
 
 class UserHomeScreen extends StatefulWidget {
   static const routeName = '/userHomeScreen';
@@ -109,10 +111,10 @@ class _UserHomeState extends State<UserHomeScreen> {
                 onTap: con.sharedWithMe,
               ),
               ListTile(
-                  leading: Icon(Icons.settings),
-                  title: Text('Settings'),
-                  onTap: null //con.settings,
-                  ),
+                leading: Icon(Icons.settings),
+                title: Text('Settings'),
+                onTap: con.goToSettings, //con.settings,
+              ),
               ListTile(
                 leading: Icon(Icons.exit_to_app),
                 title: Text('Sign Out'),
@@ -180,6 +182,20 @@ class _Controller {
       },
     );
     state.render(() {}); //rerender the screen
+  }
+
+  void goToSettings() async {
+    List<ProfilePicture> profilePictureList =
+        await FirebaseController.getProfilePictureList(email: state.user.email);
+    await Navigator.pushNamed(
+      state.context,
+      UserSettingsScreen.routeName,
+      arguments: {
+        Constant.ARG_USER: state.user,
+        Constant.ARG_PROFILEPICTURELIST: profilePictureList,
+      },
+    );
+    state.render(() {});
   }
 
   void signOut() async {
