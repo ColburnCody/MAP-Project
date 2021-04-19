@@ -185,14 +185,22 @@ class _Controller {
   }
 
   void goToSettings() async {
+    ProfilePicture profilePicture;
     List<ProfilePicture> profilePictureList =
         await FirebaseController.getProfilePictureList(email: state.user.email);
+
+    for (int i = 0; i < profilePictureList.length; ++i) {
+      if (profilePictureList[i].isProfilePicture) {
+        profilePicture = profilePictureList[i];
+      }
+    }
     await Navigator.pushNamed(
       state.context,
       UserSettingsScreen.routeName,
       arguments: {
         Constant.ARG_USER: state.user,
         Constant.ARG_PROFILEPICTURELIST: profilePictureList,
+        Constant.ARG_PROFILEPIC: profilePicture,
       },
     );
     state.render(() {});
