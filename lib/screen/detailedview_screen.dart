@@ -152,6 +152,7 @@ class _DetailedViewState extends State<DetailedViewScreen> {
                   ),
                 ],
               ),
+              Checkbox(value: null, onChanged: null),
               TextFormField(
                 enabled: editMode,
                 style: Theme.of(context).textTheme.headline6,
