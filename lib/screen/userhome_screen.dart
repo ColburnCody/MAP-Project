@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
+import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/notif.dart';
 import 'package:lesson3/model/photomemo.dart';
@@ -209,6 +210,8 @@ class _Controller {
   }
 
   void onTap(int index) async {
+    List<Comment> commentList = await FirebaseController.getCommentList(
+        photoURL: state.photoMemoList[index].photoURL);
     if (delIndex != null) return;
     await Navigator.pushNamed(
       state.context,
@@ -216,6 +219,7 @@ class _Controller {
       arguments: {
         Constant.ARG_USER: state.user,
         Constant.ARG_ONE_PHOTOMEMO: state.photoMemoList[index],
+        Constant.ARG_COMMENTlIST: commentList,
       },
     );
     state.render(() {});

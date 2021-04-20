@@ -25,6 +25,7 @@ class _DetailedViewState extends State<DetailedViewScreen> {
   User user;
   PhotoMemo onePhotoMemoOriginal;
   PhotoMemo onePhotoMemoTemp;
+  List<Comment> commentList;
   bool editMode = false;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   String progressMessage;
@@ -43,12 +44,18 @@ class _DetailedViewState extends State<DetailedViewScreen> {
     user ??= args[Constant.ARG_USER];
     onePhotoMemoOriginal ??= args[Constant.ARG_ONE_PHOTOMEMO];
     onePhotoMemoTemp ??= PhotoMemo.clone(onePhotoMemoOriginal);
+    commentList ??= args[Constant.ARG_COMMENTlIST];
     return Scaffold(
       appBar: AppBar(
         title: Text('Detailed View'),
         actions: [
           IconButton(
-            icon: Icon(Icons.chat),
+            icon: commentList.length == 0
+                ? Icon(Icons.chat)
+                : Icon(
+                    Icons.chat,
+                    color: Colors.red,
+                  ),
             onPressed: con.comment,
           ),
           editMode
