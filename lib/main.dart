@@ -6,7 +6,6 @@ import 'package:lesson3/screen/comment_screen.dart';
 import 'package:lesson3/screen/detailedview_screen.dart';
 import 'package:lesson3/screen/leavecomment_screen.dart';
 import 'package:lesson3/screen/notifications_screen.dart';
-import 'package:lesson3/screen/profilepic_screen.dart';
 import 'package:lesson3/screen/sharedwith_screen.dart';
 import 'package:lesson3/screen/signin_screen.dart';
 import 'package:lesson3/screen/signup_screen.dart';
@@ -41,7 +40,6 @@ class PhotoMemoApp extends StatelessWidget {
         LeaveCommentScreen.routeName: (context) => LeaveCommentScreen(),
         NotificationsScreen.routeName: (context) => NotificationsScreen(),
         UserSettingsScreen.routeName: (context) => UserSettingsScreen(),
-        ProfilePicScreen.routeName: (context) => ProfilePicScreen(),
       },
     );
   }

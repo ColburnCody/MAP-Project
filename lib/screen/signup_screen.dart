@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
+import 'package:lesson3/model/userdata.dart';
 import 'package:lesson3/screen/myview/mydialog.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -50,6 +51,14 @@ class _SignUpState extends State<SignUpScreen> {
                 ),
                 TextFormField(
                   decoration: InputDecoration(
+                    hintText: 'Username',
+                  ),
+                  autocorrect: false,
+                  validator: con.validateUsername,
+                  onSaved: con.saveUsername,
+                ),
+                TextFormField(
+                  decoration: InputDecoration(
                     hintText: 'Password',
                   ),
                   obscureText: true,
@@ -93,6 +102,8 @@ class _Controller {
   _Controller(this.state);
   String email;
   String password;
+  String username;
+  UserData temp = UserData();
   String passwordConfirm;
   String passwordErrorMessage;
 
@@ -109,6 +120,11 @@ class _Controller {
 
     try {
       await FirebaseController.createAccount(email: email, password: password);
+      temp.username = username;
+      temp.email = email;
+      temp.profilepic = null;
+      String userId = await FirebaseController.addUserData(temp);
+      temp.docId = userId;
       MyDialog.info(
         context: state.context,
         title: 'Account created',
@@ -128,6 +144,17 @@ class _Controller {
       return null;
     else
       return 'invalid email';
+  }
+
+  String validateUsername(String value) {
+    if (value.length < 0)
+      return 'too short';
+    else
+      return null;
+  }
+
+  void saveUsername(String value) {
+    username = value;
   }
 
   void saveEmail(String value) {

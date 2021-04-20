@@ -9,7 +9,7 @@ import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
 import 'package:lesson3/model/notif.dart';
-import 'package:lesson3/model/profilepictures.dart';
+import 'package:lesson3/model/userdata.dart';
 
 class FirebaseController {
   static Future<User> signIn({
@@ -58,31 +58,10 @@ class FirebaseController {
     };
   }
 
-  static Future<Map<String, String>> uploadProfilePicture({
-    @required File photo,
-    String filename,
-    @required String uid,
-    @required Function listener,
-  }) async {
-    filename ??= '${Constant.PROFILEPICTURE_FOLDER}/$uid/${DateTime.now()}';
-    UploadTask task = FirebaseStorage.instance.ref(filename).putFile(photo);
-    task.snapshotEvents.listen((TaskSnapshot event) {
-      double progress = event.bytesTransferred / event.totalBytes;
-      if (event.bytesTransferred == event.totalBytes) progress = null;
-      listener(progress);
-    });
-    await task;
-    String downloadURL = await FirebaseStorage.instance.ref(filename).getDownloadURL();
-    return <String, String>{
-      Constant.ARG_DOWNLOADURL: downloadURL,
-      Constant.ARG_FILENAME: filename,
-    };
-  }
-
-  static Future<String> addProfilePic(ProfilePicture profilePicture) async {
+  static Future<String> addUserData(UserData userData) async {
     var ref = await FirebaseFirestore.instance
-        .collection(Constant.PROFILEPICTURE_COLLECTION)
-        .add(profilePicture.serialize());
+        .collection(Constant.USERDATA_COLLECTION)
+        .add(userData.serialize());
     return ref.id;
   }
 
@@ -121,21 +100,6 @@ class FirebaseController {
     return result;
   }
 
-  static Future<List<ProfilePicture>> getProfilePictureList(
-      {@required String email}) async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection(Constant.PROFILEPICTURE_COLLECTION)
-        .where(ProfilePicture.CREATED_BY, isEqualTo: email)
-        .orderBy(ProfilePicture.TIMESTAMP, descending: true)
-        .get();
-
-    var result = <ProfilePicture>[];
-    querySnapshot.docs.forEach((doc) {
-      result.add(ProfilePicture.deserialize(doc.data(), doc.id));
-    });
-    return result;
-  }
-
   static Future<List<Notif>> getNotifications({@required String email}) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection(Constant.NOTIFICATIONS_COLLECTION)
@@ -164,6 +128,27 @@ class FirebaseController {
       result.add(Comment.deserialize(doc.data(), doc.id));
     });
     return result;
+  }
+
+  static Future<UserData> getUserData({@required String email}) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(Constant.USERDATA_COLLECTION)
+        .where(UserData.EMAIL, isEqualTo: email)
+        .get();
+
+    var result;
+    querySnapshot.docs.forEach((doc) {
+      result = UserData.deserialize(doc.data(), doc.id);
+    });
+    return result;
+  }
+
+  static Future<void> updateUserData(
+      String docId, Map<String, dynamic> updateInfo) async {
+    await FirebaseFirestore.instance
+        .collection(Constant.USERDATA_COLLECTION)
+        .doc(docId)
+        .update(updateInfo);
   }
 
   static Future<List<dynamic>> getImageLabels({@required File photoFile}) async {

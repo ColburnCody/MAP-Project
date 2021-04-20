@@ -6,6 +6,7 @@ import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/notif.dart';
 import 'package:lesson3/model/photomemo.dart';
+import 'package:lesson3/model/userdata.dart';
 import 'package:lesson3/screen/signup_screen.dart';
 import 'package:lesson3/screen/userhome_screen.dart';
 
@@ -158,11 +159,13 @@ class _Controller {
           await FirebaseController.getPhotoMemoList(email: user.email);
       List<Notif> notifications =
           await FirebaseController.getNotifications(email: user.email);
+      UserData userData = await FirebaseController.getUserData(email: user.email);
       MyDialog.circularProgressStop(state.context);
       Navigator.pushNamed(state.context, UserHomeScreen.routeName, arguments: {
         Constant.ARG_USER: user,
         Constant.ARG_PHOTOMEMOLIST: photoMemoList,
         Constant.ARG_NOTIFICATIONS: notifications,
+        Constant.ARG_USERDATA: userData,
       });
     } catch (e) {
       MyDialog.circularProgressStop(state.context);
