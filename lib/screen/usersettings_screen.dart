@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/userdata.dart';
 import 'package:lesson3/screen/myview/myimage.dart';
@@ -53,28 +54,15 @@ class _UserSettingsState extends State<UserSettingsScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Stack(
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    child: userData.profilepic == null
-                        ? Icon(Icons.person)
-                        : MyImage.network(url: userData.profilepic, context: context),
-                  ),
-                  TextFormField(
-                    enabled: editMode,
-                    style: Theme.of(context).textTheme.headline6,
-                    decoration: InputDecoration(
-                      hintText: 'Enter username',
-                    ),
-                    initialValue: userData.username,
-                    autocorrect: false,
-                    onSaved: con.saveUsername,
-                  ),
-                  SizedBox(
-                    height: 5.0,
-                  ),
-                ],
+              TextFormField(
+                enabled: editMode,
+                style: Theme.of(context).textTheme.headline6,
+                decoration: InputDecoration(
+                  hintText: 'Edit username',
+                ),
+                initialValue: userData.username,
+                autocorrect: false,
+                onSaved: con.saveUsername,
               ),
             ],
           ),
@@ -87,8 +75,20 @@ class _UserSettingsState extends State<UserSettingsScreen> {
 class _Controller extends _UserSettingsState {
   _UserSettingsState state;
   _Controller(this.state);
+  UserData temp = UserData();
 
-  void update() {}
-  void edit() {}
-  void saveUsername(String value) {}
+  void update() async {
+    Map<String, dynamic> updateInfo = {};
+    updateInfo[UserData.USERNAME] = state.userData.username;
+    await FirebaseController.updateUserData(state.userData.docId, updateInfo);
+    Navigator.pop(state.context);
+  }
+
+  void edit() {
+    state.render(() => state.editMode = true);
+  }
+
+  void saveUsername(String value) {
+    state.userData.username = value;
+  }
 }

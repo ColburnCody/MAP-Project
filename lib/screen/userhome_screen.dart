@@ -101,11 +101,15 @@ class _UserHomeState extends State<UserHomeScreen> {
           child: ListView(
             children: [
               UserAccountsDrawerHeader(
-                currentAccountPicture: Icon(
-                  Icons.person,
-                  size: 100.0,
-                ),
-                accountName: Text(userData.username),
+                currentAccountPicture: userData.profilepic == null
+                    ? Icon(
+                        Icons.person,
+                        size: 100.0,
+                      )
+                    : MyImage.network(url: userData.profilepic, context: context),
+                accountName: userData.username == null
+                    ? Text('Username not set')
+                    : (userData.username),
                 accountEmail: Text(user.email),
               ),
               ListTile(
@@ -116,7 +120,7 @@ class _UserHomeState extends State<UserHomeScreen> {
               ListTile(
                 leading: Icon(Icons.settings),
                 title: Text('Settings'),
-                onTap: con.goToSettings, //con.settings,
+                onTap: con.goToSettings, //con.settings,f
               ),
               ListTile(
                 leading: Icon(Icons.exit_to_app),
@@ -219,6 +223,7 @@ class _Controller {
       arguments: {
         Constant.ARG_USER: state.user,
         Constant.ARG_ONE_PHOTOMEMO: state.photoMemoList[index],
+        Constant.ARG_USERDATA: state.userData,
         Constant.ARG_COMMENTlIST: commentList,
       },
     );

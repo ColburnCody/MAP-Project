@@ -8,6 +8,7 @@ import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/comment.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/photomemo.dart';
+import 'package:lesson3/model/userdata.dart';
 import 'package:lesson3/screen/comment_screen.dart';
 import 'package:lesson3/screen/myview/mydialog.dart';
 import 'package:lesson3/screen/myview/myimage.dart';
@@ -26,6 +27,7 @@ class _DetailedViewState extends State<DetailedViewScreen> {
   PhotoMemo onePhotoMemoOriginal;
   PhotoMemo onePhotoMemoTemp;
   List<Comment> commentList;
+  UserData userData;
   bool editMode = false;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   String progressMessage;
@@ -45,6 +47,7 @@ class _DetailedViewState extends State<DetailedViewScreen> {
     onePhotoMemoOriginal ??= args[Constant.ARG_ONE_PHOTOMEMO];
     onePhotoMemoTemp ??= PhotoMemo.clone(onePhotoMemoOriginal);
     commentList ??= args[Constant.ARG_COMMENTlIST];
+    userData ??= args[Constant.ARG_USERDATA];
     return Scaffold(
       appBar: AppBar(
         title: Text('Detailed View'),
@@ -152,7 +155,11 @@ class _DetailedViewState extends State<DetailedViewScreen> {
                   ),
                 ],
               ),
-              Checkbox(value: null, onChanged: null),
+              RaisedButton(
+                onPressed: con.setProfilepic,
+                child: Text('Set as profile picture',
+                    style: Theme.of(context).textTheme.button),
+              ),
               TextFormField(
                 enabled: editMode,
                 style: Theme.of(context).textTheme.headline6,
@@ -214,6 +221,14 @@ class _Controller {
   _DetailedViewState state;
   _Controller(this.state);
   File photoFile; // camera or gallery
+
+  void setProfilepic() async {
+    state.userData.profilepic = state.onePhotoMemoTemp.photoURL;
+    Map<String, dynamic> updateInfo = {};
+    updateInfo[UserData.PROFILEPIC] = state.userData.profilepic;
+    await FirebaseController.updateUserData(state.userData.docId, updateInfo);
+    state.render(() {});
+  }
 
   void update() async {
     if (!state.formKey.currentState.validate()) return;
