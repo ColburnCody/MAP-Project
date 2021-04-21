@@ -109,7 +109,7 @@ class _UserHomeState extends State<UserHomeScreen> {
                     : MyImage.network(url: userData.profilepic, context: context),
                 accountName: userData.username == null
                     ? Text('Username not set')
-                    : (userData.username),
+                    : Text(userData.username),
                 accountEmail: Text(user.email),
               ),
               ListTile(
@@ -185,7 +185,8 @@ class _Controller {
       AddPhotoMemoScreen.routeName,
       arguments: {
         Constant.ARG_USER: state.user,
-        Constant.ARG_PHOTOMEMOLIST: state.photoMemoList
+        Constant.ARG_PHOTOMEMOLIST: state.photoMemoList,
+        Constant.ARG_USERDATA: state.userData,
       },
     );
     state.render(() {}); //rerender the screen

@@ -103,7 +103,7 @@ class _Controller {
   String email;
   String password;
   String username;
-  UserData temp = UserData();
+  UserData userData = UserData();
   String passwordConfirm;
   String passwordErrorMessage;
 
@@ -120,11 +120,11 @@ class _Controller {
 
     try {
       await FirebaseController.createAccount(email: email, password: password);
-      temp.username = username;
-      temp.email = email;
-      temp.profilepic = null;
-      String userId = await FirebaseController.addUserData(temp);
-      temp.docId = userId;
+      userData.email = email;
+      userData.username = username;
+      userData.profilepic = null;
+      String userId = await FirebaseController.addUserData(userData);
+      userData.docId = userId;
       MyDialog.info(
         context: state.context,
         title: 'Account created',
@@ -137,6 +137,11 @@ class _Controller {
         content: '$e',
       );
     }
+    userData.email = email;
+    userData.username = username;
+    userData.profilepic = null;
+    String userId = await FirebaseController.addUserData(userData);
+    userData.docId = userId;
   }
 
   String validateEmail(String value) {
@@ -144,6 +149,10 @@ class _Controller {
       return null;
     else
       return 'invalid email';
+  }
+
+  void saveEmail(String value) {
+    email = value;
   }
 
   String validateUsername(String value) {
@@ -155,10 +164,6 @@ class _Controller {
 
   void saveUsername(String value) {
     username = value;
-  }
-
-  void saveEmail(String value) {
-    email = value;
   }
 
   String validatePassword(String value) {

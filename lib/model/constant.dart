@@ -2,7 +2,7 @@ class Constant {
   static const ARG_USER = 'user';
   static const ARG_ONE_PHOTOMEMO = 'one_photomemo';
 
-  static const DEV = true;
+  static const DEV = false;
 
   static const SRC_CAMERA = 'camera';
   static const SRC_GALLERY = 'gallery';

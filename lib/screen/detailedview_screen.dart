@@ -228,6 +228,7 @@ class _Controller {
     updateInfo[UserData.PROFILEPIC] = state.userData.profilepic;
     await FirebaseController.updateUserData(state.userData.docId, updateInfo);
     state.render(() {});
+    Navigator.pop(state.context);
   }
 
   void update() async {
@@ -273,7 +274,6 @@ class _Controller {
       if (!listEquals(
           state.onePhotoMemoOriginal.sharedWith, state.onePhotoMemoTemp.sharedWith))
         updateInfo[PhotoMemo.SHARED_WITH] = state.onePhotoMemoTemp.sharedWith;
-
       updateInfo[PhotoMemo.TIMESTAMP] = DateTime.now();
 
       await FirebaseController.updatePhotoMemo(state.onePhotoMemoTemp.docId, updateInfo);

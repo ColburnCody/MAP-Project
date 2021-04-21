@@ -7,6 +7,7 @@ import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/notif.dart';
 import 'package:lesson3/model/photomemo.dart';
+import 'package:lesson3/model/userdata.dart';
 import 'package:lesson3/screen/myview/mydialog.dart';
 
 class AddPhotoMemoScreen extends StatefulWidget {

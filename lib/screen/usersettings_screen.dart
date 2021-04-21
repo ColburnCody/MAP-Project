@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:lesson3/controller/firebasecontroller.dart';
 import 'package:lesson3/model/constant.dart';
 import 'package:lesson3/model/userdata.dart';
-import 'package:lesson3/screen/myview/myimage.dart';
 
 class UserSettingsScreen extends StatefulWidget {
   static const routeName = '/userSettingsScreen';
@@ -15,7 +14,8 @@ class UserSettingsScreen extends StatefulWidget {
 
 class _UserSettingsState extends State<UserSettingsScreen> {
   User user;
-  UserData userData;
+  UserData userDataOriginal;
+  UserData userDataTemp;
   _Controller con;
   bool editMode = false;
   String progressMessage;
@@ -23,8 +23,8 @@ class _UserSettingsState extends State<UserSettingsScreen> {
 
   @override
   void initState() {
-    super.initState();
     con = _Controller(this);
+    super.initState();
   }
 
   void render(fn) => setState(fn);
@@ -33,10 +33,13 @@ class _UserSettingsState extends State<UserSettingsScreen> {
   Widget build(BuildContext context) {
     Map args = ModalRoute.of(context).settings.arguments;
     user ??= args[Constant.ARG_USER];
-    userData ??= args[Constant.ARG_USERDATA];
+    userDataOriginal ??= args[Constant.ARG_USERDATA];
+    userDataTemp ??= UserData.clone(userDataOriginal);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings screen for ${user.displayName}'),
+        title: userDataTemp.username == null
+            ? Text('Settings screen for ${userDataTemp.email}')
+            : Text('Settings screen for ${userDataTemp.username}'),
         actions: [
           editMode
               ? IconButton(
@@ -60,7 +63,7 @@ class _UserSettingsState extends State<UserSettingsScreen> {
                 decoration: InputDecoration(
                   hintText: 'Edit username',
                 ),
-                initialValue: userData.username,
+                initialValue: userDataTemp.username,
                 autocorrect: false,
                 onSaved: con.saveUsername,
               ),
@@ -75,12 +78,14 @@ class _UserSettingsState extends State<UserSettingsScreen> {
 class _Controller extends _UserSettingsState {
   _UserSettingsState state;
   _Controller(this.state);
-  UserData temp = UserData();
 
   void update() async {
+    if (!state.formKey.currentState.validate()) return;
+    state.formKey.currentState.save();
     Map<String, dynamic> updateInfo = {};
-    updateInfo[UserData.USERNAME] = state.userData.username;
-    await FirebaseController.updateUserData(state.userData.docId, updateInfo);
+    updateInfo[UserData.USERNAME] = state.userDataTemp.username;
+    await FirebaseController.updateUserData(state.userDataTemp.docId, updateInfo);
+    state.userDataOriginal.assign(state.userDataTemp);
     Navigator.pop(state.context);
   }
 
@@ -89,6 +94,6 @@ class _Controller extends _UserSettingsState {
   }
 
   void saveUsername(String value) {
-    state.userData.username = value;
+    state.userDataTemp.username = value;
   }
 }
